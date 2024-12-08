@@ -1,0 +1,38 @@
+[Unit]
+Description=Open WebUI Service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=svc_openwebui
+Group=svc_openwebui
+environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/usr/local/bin/open-webui serve
+Restart=always
+RestartSec=1
+StandardOutput=append:/var/log/openwebui/output.log
+StandardError=append:/var/log/openwebui/error.log
+
+Environment="PATH=/usr/local/bin:/usr/bin:/bin:/opt/sqlite/bin"
+Environment="LD_LIBRARY_PATH=/opt/sqlite/lib"
+Environment="PYTHONUNBUFFERED=1"
+Environment="PYTHONPATH=/usr/local/lib/python3.11/site-packages"
+Environment="HF_HOME=/etc/openwebui/huggingface"
+Environment="HF_HUB_ENABLE_HF_TRANSFER=1"
+Environment="TRANSFORMERS_CACHE=/etc/openwebui/models"
+Environment="SENTENCE_TRANSFORMERS_HOME=/etc/openwebui/models"
+Environment="HF_HUB_OFFLINE=0"
+
+# Security settings
+ProtectSystem=full
+NoNewPrivileges=true
+ProtectHome=read-only
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+
+[Install]
+WantedBy=multi-user.target
