@@ -1,0 +1,77 @@
+resource "proxmox_lxc" "openwebui" {
+  target_node  = "pve"
+  hostname     = "openwebui"
+  clone = var.lxc_template_id
+  unprivileged = true
+  onboot       = true
+  start        = true
+
+  cores  = 4
+  memory = 4092
+
+  rootfs {
+    storage = "local-lvm" 
+    size    = "128G"
+  }
+
+  network {
+    name   = "eth0"
+    bridge = "vmbr0"
+    ip     = var.openwebui_ip
+    gw     = var.gateway_ip
+  }
+
+  provisioner "local-exec" {
+    command = "sleep 10"
+  }
+
+   provisioner "remote-exec" {
+    script = "${path.module}/../openwebui/provision.sh"
+    connection {
+      type     = "ssh"
+      user     = var.user
+      password = var.password
+      host     = split("/", var.openwebui_ip)[0]
+    }
+  } 
+
+  provisioner "file" {
+    source      = "${path.module}/../openwebui/openwebui.service"
+    destination = "/etc/systemd/system/openwebui.service"
+
+    connection {
+      type     = "ssh"
+      user     = var.user
+      password = var.password
+      host     = split("/", var.openwebui_ip)[0]
+    }
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/../openwebui/ollama.service"
+    destination = "/etc/systemd/system/ollama.service"
+
+    connection {
+      type     = "ssh"
+      user     = var.user
+      password = var.password
+      host     = split("/", var.openwebui_ip)[0]
+    }
+  }
+
+  provisioner "remote-exec" {
+    script = "${path.module}/../openwebui/startup.sh"
+
+    connection {
+      type     = "ssh"
+      user     = var.user
+      password = var.password
+      host     = split("/", var.openwebui_ip)[0]
+    }
+  }
+}
+
+output "openwebui_ip" {
+  value = split("/", var.openwebui_ip)[0]
+    description = "OpenWebUI Server IP Address"
+}
