@@ -42,6 +42,19 @@ EOF
     bridge   = "vmbr0"
     model    = "virtio"
   }
+
+  connection {
+    type        = "ssh"
+    user        = var.user
+    private_key = file("~/.ssh/id_ed25519")
+    host        = split("/", var.gitlab_ip)[0]
+  }
+  provisioner "remote-exec" {
+    script = "${path.module}/../gitlab/provision.sh"
+  }
+  provisioner "remote-exec" {
+    script = "${path.module}/../gitlab/startup.sh"
+  }
 }
 
 output "gitlab_ip" {
