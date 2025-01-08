@@ -8,12 +8,11 @@ resource "proxmox_vm_qemu" "TEMPLATE" {
   os_type     = "cloud-init"
   boot        = "order=scsi0;ide2"
 
-  ipconfig0  = "ip=${var.TEMPLATE_ip},gw=${var.gateway_ip}"
-  ciuser     = var.user
-  cipassword = var.password
-  sshkeys    = <<EOF
-${var.ssh_public_key}
-EOF
+  ipconfig0 = "ip=${var.TEMPLATE_ip},gw=${var.gateway_ip}"
+  ciuser    = var.user
+  sshkeys   = <<EOF
+		${var.ssh_public_key}
+	EOF
 
   disks {
     scsi {
@@ -42,14 +41,17 @@ EOF
     bridge   = "vmbr0"
     model    = "virtio"
   }
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.gitlab_ip)[0]
-    }
-   provisioner "remote-exec" {
-    script = "${path.module}/../gitlab/provision.sh"
+  connection {
+    type        = "ssh"
+    user        = var.user
+    private_key = file("~/.ssh/id_ed25519")
+    host        = split("/", var.gitlab_ip)[0]
+  }
+  provisioner "remote-exec" {
+    script = "${path.module}/../TEMPLATE/provision.sh"
+  }
+  provisioner "remote-exec" {
+    script = "${path.module}/../TEMPLATE/startup.sh"
   }
 }
 
