@@ -2,5 +2,5 @@
 **/.terraform/**
 *.tfstate
 *.tfstate.*
-proxmox.tf
+**/proxmox.tf
 state/
