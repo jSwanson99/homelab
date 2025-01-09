@@ -13,8 +13,8 @@ variable "gitlab_ip" {
   type        = string
   default     = "192.168.1.13/24"
 }
-variable "jenkins_ip" {
-  description = "IP of Jenkins"
+variable "postgres_ip" {
+  description = "IP of Postgres"
   type        = string
   default     = "192.168.1.14/24"
 }

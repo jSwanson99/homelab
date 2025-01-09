@@ -8,11 +8,10 @@ resource "proxmox_vm_qemu" "gitlab" {
   os_type     = "cloud-init"
   boot        = "order=scsi0;ide2"
 
-  ipconfig0  = "ip=${var.gitlab_ip},gw=${var.gateway_ip}"
-  ciuser     = var.user
-  cipassword = var.password
-  sshkeys    = <<EOF
-${var.ssh_public_key}
+  ipconfig0 = "ip=${var.gitlab_ip},gw=${var.gateway_ip}"
+  ciuser    = var.user
+  sshkeys   = <<EOF
+${file("~/.ssh/id_ed25519.pub")}
 EOF
 
   disks {

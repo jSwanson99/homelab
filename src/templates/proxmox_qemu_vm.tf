@@ -11,8 +11,8 @@ resource "proxmox_vm_qemu" "TEMPLATE" {
   ipconfig0 = "ip=${var.TEMPLATE_ip},gw=${var.gateway_ip}"
   ciuser    = var.user
   sshkeys   = <<EOF
-		${var.ssh_public_key}
-	EOF
+${var.public_key}
+EOF
 
   disks {
     scsi {
@@ -44,8 +44,8 @@ resource "proxmox_vm_qemu" "TEMPLATE" {
   connection {
     type        = "ssh"
     user        = var.user
-    private_key = file("~/.ssh/id_ed25519")
-    host        = split("/", var.gitlab_ip)[0]
+    private_key = var.private_key
+    host        = split("/", var.TEMPLATE_ip)[0]
   }
   provisioner "remote-exec" {
     script = "${path.module}/../TEMPLATE/provision.sh"

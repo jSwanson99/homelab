@@ -1,7 +1,7 @@
 resource "proxmox_lxc" "coredns" {
   target_node  = "pve"
   hostname     = "coredns"
-  clone = var.lxc_template_id
+  clone        = var.lxc_template_id
   unprivileged = true
   onboot       = true
   start        = true
@@ -10,7 +10,7 @@ resource "proxmox_lxc" "coredns" {
   memory = 512
 
   rootfs {
-    storage = "local-lvm" 
+    storage = "local-lvm"
     size    = "32G"
   }
 
@@ -21,60 +21,39 @@ resource "proxmox_lxc" "coredns" {
     gw     = var.gateway_ip
   }
 
+  connection {
+    type        = "ssh"
+    user        = var.user
+    private_key = file("~/.ssh/id_ed25519")
+    host        = split("/", var.coredns_ip)[0]
+  }
+
   provisioner "local-exec" {
     command = "sleep 10"
   }
 
-   provisioner "remote-exec" {
+  provisioner "remote-exec" {
     script = "${path.module}/../coredns/provision.sh"
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.coredns_ip)[0]
-    }
-  } 
+  }
 
   provisioner "file" {
     content = templatefile("${path.module}/../coredns/Corefile.tftpl", {
-      jenkins_ip  = split("/", var.jenkins_ip)[0]
-      minio_ip    = split("/", var.minio_ip)[0]
+      minio_ip = split("/", var.minio_ip)[0]
     })
     destination = "/etc/coredns/Corefile"
-
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.coredns_ip)[0]
-    }
   }
 
   provisioner "file" {
     source      = "${path.module}/../coredns/coredns.service"
     destination = "/etc/systemd/system/coredns.service"
-
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.coredns_ip)[0]
-    }
   }
 
   provisioner "remote-exec" {
     script = "${path.module}/../coredns/startup.sh"
-
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.coredns_ip)[0]
-    }
   }
 }
 
 output "coredns_ip" {
-  value = split("/", var.coredns_ip)[0]
-    description = "CoreDNS Server IP Address"
+  value       = split("/", var.coredns_ip)[0]
+  description = "CoreDNS Server IP Address"
 }

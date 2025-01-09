@@ -1,7 +1,7 @@
 resource "proxmox_lxc" "minio" {
   target_node  = "pve"
   hostname     = "minio"
-  clone = var.lxc_template_id 
+  clone        = var.lxc_template_id
   unprivileged = true
   onboot       = true
   start        = true
@@ -10,7 +10,7 @@ resource "proxmox_lxc" "minio" {
   memory = 2048
 
   rootfs {
-    storage = "local-lvm" 
+    storage = "local-lvm"
     size    = "128G"
   }
 
@@ -21,53 +21,33 @@ resource "proxmox_lxc" "minio" {
     gw     = var.gateway_ip
   }
 
+  connection {
+    type        = "ssh"
+    user        = var.user
+    private_key = file("~/.ssh/id_ed25519")
+    host        = split("/", var.minio_ip)[0]
+  }
+
   provisioner "local-exec" {
     command = "sleep 10"
   }
 
-   provisioner "remote-exec" {
+  provisioner "remote-exec" {
     script = "${path.module}/../minio/provision.sh"
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.minio_ip)[0]
-    }
-  } 
+  }
 
   provisioner "file" {
     source      = "${path.module}/../minio/minio.service"
     destination = "/etc/systemd/system/minio.service"
-
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.minio_ip)[0]
-    }
   }
 
   provisioner "file" {
     source      = "${path.module}/../minio/minio"
     destination = "/etc/default/minio"
-
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.minio_ip)[0]
-    }
   }
 
   provisioner "remote-exec" {
     script = "${path.module}/../minio/startup.sh"
-
-    connection {
-      type     = "ssh"
-      user     = var.user
-      password = var.password
-      host     = split("/", var.minio_ip)[0]
-    }
   }
 }
 
