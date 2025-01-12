@@ -51,6 +51,10 @@ EOF
   provisioner "remote-exec" {
     script = "${path.module}/../gitlab/provision.sh"
   }
+  provisioner "file" {
+    source      = "${path.module}/../gitlab/gitlab.rb"
+    destination = "/etc/gitlab/gitlab.rb"
+  }
   provisioner "remote-exec" {
     script = "${path.module}/../gitlab/startup.sh"
   }

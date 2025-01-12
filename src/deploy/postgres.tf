@@ -51,6 +51,10 @@ EOF
   provisioner "remote-exec" {
     script = "${path.module}/../postgres/provision.sh"
   }
+  provisioner "file" {
+    source      = "${path.module}/../postgres/postgres.conf"
+    destination = "/usr/share/postgresql/postgresql.conf"
+  }
   provisioner "remote-exec" {
     script = "${path.module}/../postgres/startup.sh"
   }
