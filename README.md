@@ -51,3 +51,13 @@
 - 3x 4vcpu 6gb mem agents
 - 1x 2vcpu 2gb mem server
 - 1x 2vcpu 4gb mem VM for pg and vault
+
+## How to operate
+
+1. If starting from scratch, ensure backend is set to local inside "providers.tf"
+2. terraform init
+3. terraform plan -target=module.bootstrap
+    - This should create a vm with vault and with postgres, which terraform will user
+4. Change backend to postgres now
+5. terraform init -migrate-state
+6. ...
