@@ -55,59 +55,34 @@ EOF
     source      = "${path.module}/config/postgres.conf"
     destination = "/var/lib/pgsql/17/data/postgresql.conf"
   }
+  provisioner "file" {
+    source      = "${path.module}/config/pg_hba.conf"
+    destination = "/var/lib/pgsql/17/data/pg_hba.conf"
+  }
   provisioner "remote-exec" {
     script = "${path.module}/config/startup.sh"
   }
-}
-
-output "pg_vault_ip" {
-  value = split("/", var.pg_vault_ip)[0]
-}
-
-resource "null_resource" "wait_for_vm" {
-  depends_on = [proxmox_vm_qemu.pg_vault]
-  triggers = {
-    vm_id = proxmox_vm_qemu.pg_vault.id
-  }
-
-  provisioner "local-exec" {
-    command = <<-EOT
-      until ping -c1 ${proxmox_vm_qemu.pg_vault.default_ipv4_address} >/dev/null 2>&1; do
-        echo "Waiting for VM to become available..."
-        sleep 5
-      done
-    EOT
-  }
-}
-resource "null_resource" "setup_postgres" {
-  depends_on = [null_resource.wait_for_vm]
-  triggers = {
-    vm_id = proxmox_vm_qemu.pg_vault.id
-  }
-
-  connection {
-    type        = "ssh"
-    user        = var.user
-    private_key = file("~/.ssh/id_ed25519")
-    host        = split("/", var.pg_vault_ip)[0]
-  }
-
   provisioner "remote-exec" {
     inline = [
       "until sudo systemctl status postgresql-17 > /dev/null 2>&1; do echo 'Waiting for PostgreSQL service...'; sleep 5; done",
       "sudo -u postgres psql -c \"ALTER SYSTEM SET password_encryption TO 'scram-sha-256';\"",
-      # Create application users
-      "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_terraform} WITH PASSWORD '${var.pg_password_terraform}'\";",
+      # Create vault user and table
       "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_vault} WITH PASSWORD '${var.pg_password_vault}'\";",
-      # Create vault table
-      "sudo -u postgres psql -d vault -c \"CREATE TABLE vault_kv_store (parent_path TEXT COLLATE \"C\" NOT NULL, path TEXT COLLATE \"C\", key TEXT COLLATE \"C\", value BYTEA, CONSTRAINT pkey PRIMARY KEY (path, key))\"",
-      "sudo -u postgres psql -d vault -c \"GRANT ALL PRIVILEGES ON TABLE vault_kv_store TO ${var.pg_user_vault};\"",
+      "sudo -u postgres psql -c \"CREATE DATABASE vault\"",
       "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE vault TO ${var.pg_user_vault};\"",
-
+      # Terraform user and database
+      "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_terraform} WITH PASSWORD '${var.pg_password_terraform}'\";",
+      "sudo -u postgres psql -c \"CREATE DATABASE terraform\"",
+      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE terraform TO ${var.pg_user_terraform}\"",
+      "sudo -u postgres psql -d terraform -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_terraform}\"",
       # Update pg_hba.conf to allow remote connections
       "echo 'host    replication     all             ::1/128                 scram-sha-256' | sudo tee -a /var/lib/pgsql/17/data/pg_hba.conf",
       "echo 'host    all    all                      0.0.0.0/0               scram-sha-256' | sudo tee -a /var/lib/pgsql/17/data/pg_hba.conf",
       "sudo systemctl restart postgresql-17"
     ]
   }
+}
+
+output "pg_vault_ip" {
+  value = split("/", var.pg_vault_ip)[0]
 }
