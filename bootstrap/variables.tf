@@ -11,11 +11,34 @@ variable "gateway_ip" {
 variable "lxc_template_id" {
   description = "ID of LXC Template to Clone"
   type        = number
-  default     = 101
+  default     = 2001
 }
 variable "vm_template_id" {
   description = "ID of VM Template to Clone"
   type        = string
   default     = "rocky-template-vm"
 }
+variable "pg_database_terraform" {
+  description = "Name of database for terraform to use"
+  type        = string
+  default     = "terraform"
+}
 
+variable "user" {
+  type      = string
+  sensitive = true
+}
+variable "pg_user_vault" {
+  type = string
+}
+variable "pg_password_vault" {
+  type      = string
+  sensitive = true
+}
+variable "pg_user_terraform" {
+  type = string
+}
+variable "pg_password_terraform" {
+  type      = string
+  sensitive = true
+}
