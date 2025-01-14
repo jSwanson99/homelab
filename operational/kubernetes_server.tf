@@ -48,6 +48,26 @@ EOF
     private_key = file("~/.ssh/id_ed25519")
     host        = split("/", var.kubernetes_server_ip)[0]
   }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo dnf install -y curl",
+      "sudo mkdir -p /etc/rancher/k3s",
+    ]
+  }
+  provisioner "file" {
+    content = templatefile("${path.module}/config/server.yaml.tftpl", {
+      pg_user_kubernetes     = var.pg_user_kubernetes,
+      pg_password_kubernetes = var.pg_password_kubernetes,
+      pg_database_kubernetes = var.pg_database_kubernetes,
+      pg_vault_ip            = split("/", var.pg_vault_ip)[0],
+    })
+    destination = "/etc/rancher/k3s/config.yaml"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "curl -sfL https://get.k3s.io | sh -s - server",
+    ]
+  }
 }
 
 output "kubernetes_server_ip" {

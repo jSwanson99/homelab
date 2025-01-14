@@ -33,6 +33,16 @@ variable "pg_password_terraform" {
   type      = string
   sensitive = true
 }
+variable "pg_user_kubernetes" {
+  type = string
+}
+variable "pg_password_kubernetes" {
+  type      = string
+  sensitive = true
+}
+variable "pg_database_kubernetes" {
+  type = string
+}
 
 # New
 variable "kubernetes_server_ip" {
@@ -43,4 +53,8 @@ variable "kubernetes_node_one_ip" {
 }
 variable "kubernetes_node_two_ip" {
   type = string
+}
+
+locals {
+  pg_dsl_kubernetes = "postgres://${var.pg_user_kubernetes}:${var.pg_password_kubernetes}@${var.pg_vault_ip}:5432/${var.pg_database_kubernetes}"
 }

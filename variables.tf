@@ -1,3 +1,14 @@
+variable "lxc_template_id" {
+  description = "ID of LXC Template to Clone"
+  type        = number
+  default     = 2001
+}
+variable "vm_template_id" {
+  description = "ID of VM Template to Clone"
+  type        = string
+  default     = "rocky-template-vm"
+}
+
 variable "gateway_ip" {
   description = "IP of router"
   type        = string
@@ -23,15 +34,16 @@ variable "kubernetes_node_two_ip" {
   type        = string
   default     = "192.168.1.32/24"
 }
-variable "lxc_template_id" {
-  description = "ID of LXC Template to Clone"
-  type        = number
-  default     = 2001
-}
-variable "vm_template_id" {
-  description = "ID of VM Template to Clone"
+
+variable "pg_database_kubernetes" {
+  description = "Name of database for kubernetes to use"
   type        = string
-  default     = "rocky-template-vm"
+  default     = "kubernetes"
+}
+variable "pg_database_vault" {
+  description = "Name of database for vault to use"
+  type        = string
+  default     = "vault"
 }
 variable "pg_database_terraform" {
   description = "Name of database for terraform to use"

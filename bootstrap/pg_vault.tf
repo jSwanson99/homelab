@@ -66,16 +66,22 @@ EOF
     inline = [
       "until sudo systemctl status postgresql-17 > /dev/null 2>&1; do echo 'Waiting for PostgreSQL service...'; sleep 5; done",
       "sudo -u postgres psql -c \"ALTER SYSTEM SET password_encryption TO 'scram-sha-256';\"",
-      # Create vault user and table
+      # K3S - These should probably be template files
+      "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_kubernetes} WITH PASSWORD '${var.pg_password_kubernetes}'\";",
+      "sudo -u postgres psql -c \"CREATE DATABASE ${var.pg_database_kubernetes}\"",
+      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${var.pg_database_kubernetes} TO ${var.pg_user_kubernetes};\"",
+      "sudo -u postgres psql -d ${var.pg_database_kubernetes} -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_kubernetes}\"",
+      # VAULT
       "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_vault} WITH PASSWORD '${var.pg_password_vault}'\";",
-      "sudo -u postgres psql -c \"CREATE DATABASE vault\"",
-      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE vault TO ${var.pg_user_vault};\"",
-      # Terraform user and database
+      "sudo -u postgres psql -c \"CREATE DATABASE ${var.pg_database_vault}\"",
+      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${var.pg_database_vault} TO ${var.pg_user_vault};\"",
+      "sudo -u postgres psql -d ${var.pg_database_vault} -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_vault}\"",
+      # TERRAFORM
       "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_terraform} WITH PASSWORD '${var.pg_password_terraform}'\";",
-      "sudo -u postgres psql -c \"CREATE DATABASE terraform\"",
-      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE terraform TO ${var.pg_user_terraform}\"",
-      "sudo -u postgres psql -d terraform -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_terraform}\"",
-      # Update pg_hba.conf to allow remote connections
+      "sudo -u postgres psql -c \"CREATE DATABASE ${var.pg_database_terraform}\"",
+      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${var.pg_database_terraform} TO ${var.pg_user_terraform}\"",
+      "sudo -u postgres psql -d ${var.pg_database_terraform} -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_terraform}\"",
+      # DO I NEED THIS STILL??????????
       "echo 'host    replication     all             ::1/128                 scram-sha-256' | sudo tee -a /var/lib/pgsql/17/data/pg_hba.conf",
       "echo 'host    all    all                      0.0.0.0/0               scram-sha-256' | sudo tee -a /var/lib/pgsql/17/data/pg_hba.conf",
       "sudo systemctl restart postgresql-17"
