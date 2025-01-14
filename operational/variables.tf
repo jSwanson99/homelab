@@ -1,42 +1,46 @@
-variable "coredns_ip" {
-  description = "IP of CoreDNS"
-  type        = string
-  default     = "192.168.1.11/24"
-}
-variable "minio_ip" {
-  description = "IP of Minio"
-  type        = string
-  default     = "192.168.1.12/24"
-}
-variable "gitlab_ip" {
-  description = "IP of Gitlab"
-  type        = string
-  default     = "192.168.1.13/24"
-}
-variable "postgres_ip" {
-  description = "IP of Postgres"
-  type        = string
-  default     = "192.168.1.14/24"
-}
-variable "test_ip" {
-  description = "IP of OpenWebUI"
-  type        = string
-  default     = "192.168.1.15/24"
-}
-
-variable "gateway_ip" {
-  description = "IP of router"
-  type        = string
-  default     = "192.168.1.1"
-}
-variable "lxc_template_id" {
-  description = "ID of LXC Template to Clone"
-  type        = number
-  default     = 101
-}
+# project config
 variable "vm_template_id" {
   description = "ID of VM Template to Clone"
   type        = string
-  default     = "rocky-template-vm"
+}
+variable "user" {
+  type      = string
+  sensitive = true
 }
 
+# Ips
+variable "pg_vault_ip" {
+  description = "IP of VM for Postgres and Vault"
+  type        = string
+}
+variable "gateway_ip" {
+  description = "IP of router"
+  type        = string
+}
+
+# Postgres Credentials
+variable "pg_user_vault" {
+  type = string
+}
+variable "pg_password_vault" {
+  type      = string
+  sensitive = true
+}
+variable "pg_user_terraform" {
+  type = string
+}
+variable "pg_password_terraform" {
+  type      = string
+  sensitive = true
+}
+
+# New
+variable "kubernetes_server_ip" {
+  type = string
+}
+variable "kubernetes_node_one_ip" {
+  type = string
+}
+variable "kubernetes_node_two_ip" {
+  type = string
+}

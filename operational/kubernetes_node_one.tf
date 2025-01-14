@@ -1,15 +1,15 @@
-resource "proxmox_vm_qemu" "test" {
-  name        = "test"
+resource "proxmox_vm_qemu" "kubernetes_node_one" {
+  name        = "kubernetes-node-one"
   target_node = "pve"
   clone       = var.vm_template_id
   full_clone  = true
-  cores       = 2
-  memory      = 2048
+  cores       = 4
+  memory      = 6144
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
   boot        = "order=scsi0;ide2"
 
-  ipconfig0 = "ip=${var.test_ip},gw=${var.gateway_ip}"
+  ipconfig0 = "ip=${var.kubernetes_node_one_ip},gw=${var.gateway_ip}"
   ciuser    = var.user
   sshkeys   = <<EOF
 ${file("~/.ssh/id_ed25519.pub")}
@@ -20,7 +20,7 @@ EOF
       scsi0 {
         disk {
           storage = "local-lvm"
-          size    = "32G"
+          size    = "100G"
         }
       }
     }
@@ -46,10 +46,10 @@ EOF
     type        = "ssh"
     user        = var.user
     private_key = file("~/.ssh/id_ed25519")
-    host        = split("/", var.test_ip)[0]
+    host        = split("/", var.kubernetes_node_one_ip)[0]
   }
 }
 
-output "test_ip" {
-  value = split("/", var.test_ip)[0]
+output "kubernetes_node_one_ip" {
+  value = split("/", var.kubernetes_node_one_ip)[0]
 }
