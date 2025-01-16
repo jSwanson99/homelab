@@ -1,3 +1,59 @@
+resource "tls_private_key" "vault" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_cert_request" "vault" {
+  private_key_pem = tls_private_key.vault.private_key_pem
+  subject {
+    common_name  = "vault"
+    country      = "US"
+    organization = "JonCorpIncLLC"
+  }
+  ip_addresses = ["127.0.0.1", split("/", var.pg_vault_ip)[0]]
+}
+
+resource "tls_locally_signed_cert" "vault" {
+  cert_request_pem      = tls_cert_request.vault.cert_request_pem
+  ca_private_key_pem    = var.ca_private_key_pem
+  ca_cert_pem           = var.ca_cert_pem
+  validity_period_hours = 43800
+  allowed_uses = [
+    "digital_signature",
+    "key_encipherment",
+    "server_auth",
+    "client_auth",
+  ]
+}
+
+resource "tls_private_key" "postgres" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_cert_request" "postgres" {
+  private_key_pem = tls_private_key.postgres.private_key_pem
+  subject {
+    common_name  = "postgres"
+    country      = "US"
+    organization = "JonCorpIncLLC"
+  }
+  ip_addresses = ["127.0.0.1", split("/", var.pg_vault_ip)[0]]
+}
+
+resource "tls_locally_signed_cert" "postgres" {
+  cert_request_pem      = tls_cert_request.postgres.cert_request_pem
+  ca_private_key_pem    = var.ca_private_key_pem
+  ca_cert_pem           = var.ca_cert_pem
+  validity_period_hours = 43800
+  allowed_uses = [
+    "digital_signature",
+    "key_encipherment",
+    "server_auth",
+    "client_auth",
+  ]
+}
+
 resource "proxmox_vm_qemu" "pg_vault" {
   name        = "pg-vault"
   target_node = "pve"
@@ -48,8 +104,32 @@ EOF
     private_key = file("~/.ssh/id_ed25519")
     host        = split("/", var.pg_vault_ip)[0]
   }
+
   provisioner "remote-exec" {
     script = "${path.module}/config/provision.sh"
+  }
+  provisioner "file" {
+    content     = tls_locally_signed_cert.postgres.cert_pem
+    destination = "/etc/ssl/certs/postgres.crt"
+  }
+  provisioner "file" {
+    content     = tls_private_key.postgres.private_key_pem
+    destination = "/etc/ssl/certs/postgres.key"
+  }
+  provisioner "file" {
+    content     = tls_locally_signed_cert.vault.cert_pem
+    destination = "/etc/ssl/certs/vault.crt"
+  }
+  provisioner "file" {
+    content     = tls_private_key.vault.private_key_pem
+    destination = "/etc/ssl/certs/vault.key"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo chmod 600 /etc/ssl/certs/postgres.key", # Only owner can read/write
+      "sudo chown postgres:postgres /etc/ssl/certs/postgres.key",
+      "sudo chown postgres:postgres /etc/ssl/certs/postgres.crt",
+    ]
   }
   provisioner "file" {
     source      = "${path.module}/config/postgres.conf"
@@ -58,6 +138,14 @@ EOF
   provisioner "file" {
     source      = "${path.module}/config/pg_hba.conf"
     destination = "/var/lib/pgsql/17/data/pg_hba.conf"
+  }
+  provisioner "file" {
+    source      = "${path.module}/config/vault.hcl"
+    destination = "/etc/vault.d/vault.hcl"
+  }
+  provisioner "file" {
+    source      = "${path.module}/config/vault.sql"
+    destination = "/etc/vault.d/vault.sql"
   }
   provisioner "remote-exec" {
     script = "${path.module}/config/startup.sh"
@@ -76,6 +164,7 @@ EOF
       "sudo -u postgres psql -c \"CREATE DATABASE ${var.pg_database_vault}\"",
       "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${var.pg_database_vault} TO ${var.pg_user_vault};\"",
       "sudo -u postgres psql -d ${var.pg_database_vault} -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_vault}\"",
+      "sudo -u postgres psql -d ${var.pg_database_vault} -f /etc/vault.d/vault.sql",
       # TERRAFORM
       "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_terraform} WITH PASSWORD '${var.pg_password_terraform}'\";",
       "sudo -u postgres psql -c \"CREATE DATABASE ${var.pg_database_terraform}\"",
@@ -84,7 +173,8 @@ EOF
       # DO I NEED THIS STILL??????????
       "echo 'host    replication     all             ::1/128                 scram-sha-256' | sudo tee -a /var/lib/pgsql/17/data/pg_hba.conf",
       "echo 'host    all    all                      0.0.0.0/0               scram-sha-256' | sudo tee -a /var/lib/pgsql/17/data/pg_hba.conf",
-      "sudo systemctl restart postgresql-17"
+      "sudo systemctl restart postgresql-17",
+      "sudo systemctl restart vault"
     ]
   }
 }
@@ -92,3 +182,4 @@ EOF
 output "pg_vault_ip" {
   value = split("/", var.pg_vault_ip)[0]
 }
+

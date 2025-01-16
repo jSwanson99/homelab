@@ -6,3 +6,5 @@ sudo /usr/pgsql-17/bin/postgresql-17-setup initdb
 sudo dnf install -y dnf-plugins-core
 sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
 sudo dnf install -y vault
+
+mkdir -p /etc/ssl/certs

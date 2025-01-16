@@ -8,3 +8,5 @@ CREATE TABLE vault_kv_store (
 
 CREATE INDEX parent_path_idx ON vault_kv_store (parent_path);
 
+GRANT ALL PRIVILEGES ON TABLE vault_kv_store TO svc_vault;
+

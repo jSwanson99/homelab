@@ -2,5 +2,7 @@
 **/.terraform/**
 *.tfstate
 *.tfstate.*
+**/secrets.tf
 **/providers.tf
 state/
+-target*

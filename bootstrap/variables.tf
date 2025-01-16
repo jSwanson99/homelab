@@ -44,3 +44,11 @@ variable "pg_password_terraform" {
 variable "pg_database_terraform" {
   type = string
 }
+variable "ca_private_key_pem" {
+  type      = string
+  sensitive = true
+}
+variable "ca_cert_pem" {
+  type      = string
+  sensitive = true
+}
