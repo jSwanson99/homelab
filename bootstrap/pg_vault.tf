@@ -165,6 +165,10 @@ EOF
       "sudo -u postgres psql -c \"CREATE DATABASE ${var.pg_database_terraform}\"",
       "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${var.pg_database_terraform} TO ${var.pg_user_terraform}\"",
       "sudo -u postgres psql -d ${var.pg_database_terraform} -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_terraform}\"",
+      # So TF user can be used with PG provider
+      "sudo -u postgres psql -c \"ALTER ROLE ${var.pg_user_terraform} WITH CREATEROLE CREATEDB;\"",
+      "sudo -u postgres psql -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_terraform} WITH GRANT OPTION;\"",
+      "sudo -u postgres psql -c \"ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO ${var.pg_user_terraform} WITH GRANT OPTION;\"",
       # DO I NEED THIS STILL??????????
       "echo 'host    replication     all             ::1/128                 scram-sha-256' | sudo tee -a /var/lib/pgsql/17/data/pg_hba.conf",
       "echo 'host    all    all                      0.0.0.0/0               scram-sha-256' | sudo tee -a /var/lib/pgsql/17/data/pg_hba.conf",
