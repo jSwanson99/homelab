@@ -38,7 +38,7 @@ resource "proxmox_vm_qemu" "kubernetes_server" {
   clone       = var.vm_template_id
   full_clone  = true
   cores       = 2
-  memory      = 2048
+  memory      = 4096
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
   boot        = "order=scsi0;ide2"
