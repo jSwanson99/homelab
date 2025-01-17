@@ -1,4 +1,8 @@
 resource "proxmox_vm_qemu" "kubernetes_node_two" {
+  depends_on = [
+    proxmox_vm_qemu.kubernetes_server
+  ]
+
   name        = "kubernetes-node-two"
   target_node = "pve"
   clone       = var.vm_template_id

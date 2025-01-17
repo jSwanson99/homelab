@@ -58,3 +58,11 @@ variable "kubernetes_node_two_ip" {
 locals {
   pg_dsl_kubernetes = "postgres://${var.pg_user_kubernetes}:${var.pg_password_kubernetes}@${var.pg_vault_ip}:5432/${var.pg_database_kubernetes}"
 }
+variable "ca_private_key_pem" {
+  type      = string
+  sensitive = true
+}
+variable "ca_cert_pem" {
+  type      = string
+  sensitive = true
+}

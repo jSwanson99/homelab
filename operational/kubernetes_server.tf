@@ -1,3 +1,31 @@
+resource "tls_private_key" "kubernetes_server" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_cert_request" "kubernetes_server" {
+  private_key_pem = tls_private_key.kubernetes_server.private_key_pem
+  subject {
+    common_name  = "kubernetes_server"
+    country      = "US"
+    organization = "JonCorpIncLLC"
+  }
+  ip_addresses = ["127.0.0.1", split("/", var.pg_vault_ip)[0]]
+}
+
+resource "tls_locally_signed_cert" "kubernetes_server" {
+  cert_request_pem      = tls_cert_request.kubernetes_server.cert_request_pem
+  ca_private_key_pem    = var.ca_private_key_pem
+  ca_cert_pem           = var.ca_cert_pem
+  validity_period_hours = 43800
+  allowed_uses = [
+    "digital_signature",
+    "key_encipherment",
+    "server_auth",
+    "client_auth",
+  ]
+}
+
 resource "proxmox_vm_qemu" "kubernetes_server" {
   name        = "kubernetes-server"
   target_node = "pve"
@@ -52,7 +80,20 @@ EOF
     inline = [
       "sudo dnf install -y curl",
       "sudo mkdir -p /etc/rancher/k3s",
+      "sudo mkdir -p /etc/ssl/certs",
     ]
+  }
+  provisioner "file" {
+    content     = tls_locally_signed_cert.kubernetes_server.cert_pem
+    destination = "/etc/ssl/certs/kubernetes_server.crt"
+  }
+  provisioner "file" {
+    content     = tls_private_key.kubernetes_server.private_key_pem
+    destination = "/etc/ssl/certs/kubernetes_server.key"
+  }
+  provisioner "file" {
+    content     = var.ca_cert_pem
+    destination = "/etc/ssl/certs/ca.crt"
   }
   provisioner "file" {
     content = templatefile("${path.module}/config/server.yaml.tftpl", {
@@ -60,6 +101,9 @@ EOF
       pg_password_kubernetes = var.pg_password_kubernetes,
       pg_database_kubernetes = var.pg_database_kubernetes,
       pg_vault_ip            = split("/", var.pg_vault_ip)[0],
+      cafile                 = "/etc/ssl/certs/ca.crt",
+      certfile               = "/etc/ssl/certs/kubernetes_server.crt",
+      keyfile                = "/etc/ssl/certs/kubernetes_server.key"
     })
     destination = "/etc/rancher/k3s/config.yaml"
   }
