@@ -27,6 +27,12 @@ resource "tls_locally_signed_cert" "kubernetes_server" {
 }
 
 resource "proxmox_vm_qemu" "kubernetes_server" {
+  depends_on = [
+    postgresql_role.kubernetes_user,
+    postgresql_database.kubernetes_db,
+    postgresql_grant.database_privileges,
+    postgresql_grant.schema_privileges
+  ]
   name        = "kubernetes-server"
   target_node = "pve"
   clone       = var.vm_template_id

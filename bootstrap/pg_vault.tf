@@ -154,11 +154,6 @@ EOF
     inline = [
       "until sudo systemctl status postgresql-17 > /dev/null 2>&1; do echo 'Waiting for PostgreSQL service...'; sleep 5; done",
       "sudo -u postgres psql -c \"ALTER SYSTEM SET password_encryption TO 'scram-sha-256';\"",
-      # K3S - These should probably be template files
-      "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_kubernetes} WITH PASSWORD '${var.pg_password_kubernetes}'\";",
-      "sudo -u postgres psql -c \"CREATE DATABASE ${var.pg_database_kubernetes}\"",
-      "sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE ${var.pg_database_kubernetes} TO ${var.pg_user_kubernetes};\"",
-      "sudo -u postgres psql -d ${var.pg_database_kubernetes} -c \"GRANT ALL ON SCHEMA public TO ${var.pg_user_kubernetes}\"",
       # VAULT
       "sudo -u postgres psql -c \"CREATE USER ${var.pg_user_vault} WITH PASSWORD '${var.pg_password_vault}'\";",
       "sudo -u postgres psql -c \"CREATE DATABASE ${var.pg_database_vault}\"",

@@ -26,13 +26,6 @@ variable "pg_password_vault" {
   type      = string
   sensitive = true
 }
-variable "pg_user_terraform" {
-  type = string
-}
-variable "pg_password_terraform" {
-  type      = string
-  sensitive = true
-}
 variable "pg_user_kubernetes" {
   type = string
 }
@@ -41,6 +34,16 @@ variable "pg_password_kubernetes" {
   sensitive = true
 }
 variable "pg_database_kubernetes" {
+  type = string
+}
+variable "pg_user_terraform" {
+  type = string
+}
+variable "pg_password_terraform" {
+  type      = string
+  sensitive = true
+}
+variable "pg_database_terraform" {
   type = string
 }
 

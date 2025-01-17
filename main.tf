@@ -35,6 +35,7 @@ module "operational" {
 
   pg_user_terraform     = var.pg_user_terraform
   pg_password_terraform = var.pg_password_terraform
+  pg_database_terraform = var.pg_database_terraform
 
   pg_user_kubernetes     = var.pg_user_kubernetes
   pg_password_kubernetes = var.pg_password_kubernetes
