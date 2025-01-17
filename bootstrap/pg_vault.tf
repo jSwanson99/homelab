@@ -148,7 +148,7 @@ EOF
     destination = "/etc/vault.d/vault.sql"
   }
   provisioner "remote-exec" {
-    script = "${path.module}/config/startup.sh"
+    script = "${path.module}/config/start_postgres.sh"
   }
   provisioner "remote-exec" {
     inline = [
@@ -175,6 +175,9 @@ EOF
       "sudo systemctl restart postgresql-17",
       "sudo systemctl restart vault"
     ]
+  }
+  provisioner "remote-exec" {
+    script = "${path.module}/config/start_vault.sh"
   }
 }
 
