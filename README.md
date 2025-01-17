@@ -1,5 +1,7 @@
 # Homelab!
 
+![System Diagram](graph.png)
+
 ## Description
 - This repository contains the terraform files necessary to rebuilt my homelab
 
