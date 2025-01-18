@@ -23,8 +23,7 @@ variable "pg_user_vault" {
   type = string
 }
 variable "pg_password_vault" {
-  type      = string
-  sensitive = true
+  type = string
 }
 variable "pg_user_kubernetes" {
   type = string
@@ -68,4 +67,7 @@ variable "ca_private_key_pem" {
 variable "ca_cert_pem" {
   type      = string
   sensitive = true
+}
+variable "vault_token" {
+  type = string
 }

@@ -28,6 +28,7 @@ module "operational" {
   vm_template_id = var.vm_template_id
   user           = var.user
 
+  vault_token = module.bootstrap.vault_root_token
   pg_vault_ip = var.pg_vault_ip
 
   pg_user_vault     = var.pg_user_vault

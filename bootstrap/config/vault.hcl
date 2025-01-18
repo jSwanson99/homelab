@@ -4,16 +4,14 @@
 # Full configuration options can be found at https://developer.hashicorp.com/vault/docs/configuration
 
 ui = true
-#mlock = true
-#disable_mlock = true
+api_addr = "https://${split("/", pg_vault_ip)[0]}:8200"
 
-# HTTPS listener
 listener "tcp" {
-  address       = "0.0.0.0:8200"
+  address       = "${split("/", pg_vault_ip)[0]}:8200"
   tls_cert_file = "/etc/ssl/certs/vault.crt"
   tls_key_file  = "/etc/ssl/certs/vault.key"
 }
 
 storage "postgresql" {
-  connection_url = "postgres://svc_vault:vault_user123!@localhost:5432/vault"
+  connection_url = "postgres://${pg_user_vault}:${pg_password_vault}@localhost:5432/${pg_database_vault}"
 }

@@ -10,7 +10,7 @@ resource "tls_cert_request" "kubernetes_server" {
     country      = "US"
     organization = "JonCorpIncLLC"
   }
-  ip_addresses = ["127.0.0.1", split("/", var.pg_vault_ip)[0]]
+  ip_addresses = ["127.0.0.1", split("/", var.kubernetes_server_ip)[0]]
 }
 
 resource "tls_locally_signed_cert" "kubernetes_server" {
@@ -119,7 +119,19 @@ EOF
     ]
   }
 }
+data "external" "k3s_node_token" {
+  depends_on = [proxmox_vm_qemu.kubernetes_server]
+  program = [
+    "ssh",
+    "-o", "StrictHostKeyChecking=no",
+    "root@${split("/", var.kubernetes_server_ip)[0]}",
+    "cat /var/lib/rancher/k3s/server/node-token | jq -R '{token: .}'"
+  ]
+}
 
 output "kubernetes_server_ip" {
   value = split("/", var.kubernetes_server_ip)[0]
+}
+output "kubernetes_node_token" {
+  value = data.external.k3s_node_token.result.token
 }

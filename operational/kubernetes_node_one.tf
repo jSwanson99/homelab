@@ -1,3 +1,31 @@
+resource "tls_private_key" "kubernetes_node_one" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_cert_request" "kubernetes_node_one" {
+  private_key_pem = tls_private_key.kubernetes_node_one.private_key_pem
+  subject {
+    common_name  = "kubernetes_node_one"
+    country      = "US"
+    organization = "JonCorpIncLLC"
+  }
+  ip_addresses = ["127.0.0.1", split("/", var.kubernetes_node_one_ip)[0]]
+}
+
+resource "tls_locally_signed_cert" "kubernetes_node_one" {
+  cert_request_pem      = tls_cert_request.kubernetes_node_one.cert_request_pem
+  ca_private_key_pem    = var.ca_private_key_pem
+  ca_cert_pem           = var.ca_cert_pem
+  validity_period_hours = 43800
+  allowed_uses = [
+    "digital_signature",
+    "key_encipherment",
+    "server_auth",
+    "client_auth",
+  ]
+}
+
 resource "proxmox_vm_qemu" "kubernetes_node_one" {
   depends_on = [
     proxmox_vm_qemu.kubernetes_server
@@ -51,6 +79,11 @@ EOF
     user        = var.user
     private_key = file("~/.ssh/id_ed25519")
     host        = split("/", var.kubernetes_node_one_ip)[0]
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "curl -sfL https://get.k3s.io | K3S_URL=https://${split("/", var.kubernetes_server_ip)[0]}:6443 K3S_TOKEN=${data.external.k3s_node_token.result.token} sh -",
+    ]
   }
 }
 

@@ -50,8 +50,8 @@
 - 1tb ssd
 
 ### Plan
-- 3x 4vcpu 6gb mem agents
-- 1x 2vcpu 2gb mem server
+- 2x 4vcpu 6gb mem agents
+- 1x 2vcpu 4gb mem server
 - 1x 2vcpu 4gb mem VM for pg and vault
 
 ## How to operate
@@ -62,4 +62,7 @@
     - This should create a vm with vault and with postgres, which terraform will user
 4. Change backend to postgres now
 5. terraform init -migrate-state
-6. ...
+6. Unseal vault, right now this is manual
+7. terraform plan -target=module.operational
+8. ...
+
