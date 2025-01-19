@@ -84,7 +84,7 @@ EOF
   }
   provisioner "remote-exec" {
     inline = [
-      "sudo dnf install -y curl",
+      "sudo dnf install -y curl tar",
       "sudo mkdir -p /etc/rancher/k3s",
       "sudo mkdir -p /etc/ssl/certs",
     ]
@@ -113,11 +113,26 @@ EOF
     })
     destination = "/etc/rancher/k3s/config.yaml"
   }
+
+  # Install k3s Server
   provisioner "remote-exec" {
     inline = [
-      "curl -sfL https://get.k3s.io | sh -s - server",
+      "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml",
+      "curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC='--flannel-backend=none --disable-network-policy --disable-kube-proxy' sh -s - server",
       "sudo firewall-cmd --add-port=6443/tcp --permanent",
       "sudo firewall-cmd --reload",
+      "systemctl is-active k3s --wait",
+
+      # Cilium installation
+      "CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)",
+      "CLI_ARCH=amd64",
+      "if [ \"$(uname -m)\" = \"aarch64\" ]; then CLI_ARCH=arm64; fi",
+      "curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/$CILIUM_CLI_VERSION/cilium-linux-$CLI_ARCH.tar.gz{,.sha256sum}",
+      "sha256sum --check cilium-linux-$CLI_ARCH.tar.gz.sha256sum",
+      "sudo tar xzvfC cilium-linux-$CLI_ARCH.tar.gz /usr/local/bin",
+      "rm cilium-linux-$CLI_ARCH.tar.gz{,.sha256sum}",
+      "cilium install --version 1.16.5 --set=ipam.operator.clusterPoolIPv4PodCIDRList=\"10.42.0.0/16\" --set kubeProxyReplacement=strict --set k8sServiceHost=localhost --set k8sServicePort=6443",
+      "cilium status --wait"
     ]
   }
 }
