@@ -23,7 +23,7 @@ module "bootstrap" {
 }
 
 module "operational" {
-  source         = "./operational"
+  source         = "./kubernetes/k3s"
   gateway_ip     = var.gateway_ip
   vm_template_id = var.vm_template_id
   user           = var.user
