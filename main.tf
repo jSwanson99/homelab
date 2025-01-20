@@ -22,8 +22,8 @@ module "bootstrap" {
   ca_cert_pem        = tls_self_signed_cert.ca.cert_pem
 }
 
-module "operational" {
-  source         = "./kubernetes/k3s"
+module "kubernetes" {
+  source         = "./kubernetes/k8s"
   gateway_ip     = var.gateway_ip
   vm_template_id = var.vm_template_id
   user           = var.user

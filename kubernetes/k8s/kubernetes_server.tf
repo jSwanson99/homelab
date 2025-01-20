@@ -1,0 +1,168 @@
+resource "tls_private_key" "kubernetes_server" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_cert_request" "kubernetes_server" {
+  private_key_pem = tls_private_key.kubernetes_server.private_key_pem
+  subject {
+    common_name  = "kubernetes_server"
+    country      = "US"
+    organization = "JonCorpIncLLC"
+  }
+  ip_addresses = ["127.0.0.1", split("/", var.kubernetes_server_ip)[0]]
+}
+
+resource "tls_locally_signed_cert" "kubernetes_server" {
+  cert_request_pem      = tls_cert_request.kubernetes_server.cert_request_pem
+  ca_private_key_pem    = var.ca_private_key_pem
+  ca_cert_pem           = var.ca_cert_pem
+  validity_period_hours = 43800
+  allowed_uses = [
+    "digital_signature",
+    "key_encipherment",
+    "server_auth",
+    "client_auth",
+  ]
+}
+resource "tls_private_key" "apiserver-kubelet-client" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+resource "tls_cert_request" "apiserver-kubelet-client" {
+  private_key_pem = tls_private_key.kubernetes_server.private_key_pem
+  subject {
+    common_name  = "kubernetes_server"
+    country      = "US"
+    organization = "JonCorpIncLLC"
+  }
+  ip_addresses = ["127.0.0.1", split("/", var.kubernetes_server_ip)[0]]
+}
+
+resource "tls_locally_signed_cert" "apiserver-kubelet-client" {
+  cert_request_pem      = tls_cert_request.kubernetes_server.cert_request_pem
+  ca_private_key_pem    = var.ca_private_key_pem
+  ca_cert_pem           = var.ca_cert_pem
+  validity_period_hours = 43800
+  allowed_uses = [
+    "digital_signature",
+    "key_encipherment",
+    "server_auth",
+    "client_auth",
+  ]
+}
+
+resource "proxmox_vm_qemu" "kubernetes_server" {
+  name        = "kubernetes-server"
+  target_node = "pve"
+  clone       = var.vm_template_id
+  full_clone  = true
+  cores       = 2
+  memory      = 4096
+  scsihw      = "virtio-scsi-single"
+  os_type     = "cloud-init"
+  boot        = "order=scsi0;ide2"
+
+  ipconfig0 = "ip=${var.kubernetes_server_ip},gw=${var.gateway_ip}"
+  ciuser    = var.user
+  sshkeys   = <<EOF
+${file("~/.ssh/id_ed25519.pub")}
+EOF
+
+  disks {
+    scsi {
+      scsi0 {
+        disk {
+          storage = "local-lvm"
+          size    = "32G"
+        }
+      }
+    }
+    ide {
+      ide0 {
+        cloudinit {
+          storage = "local-lvm"
+        }
+      }
+      ide2 {
+        cdrom {
+          iso = "local:iso/Rocky-9.4-x86_64-minimal.iso"
+        }
+      }
+    }
+  }
+  network {
+    firewall = true
+    bridge   = "vmbr0"
+    model    = "virtio"
+  }
+  connection {
+    type        = "ssh"
+    user        = var.user
+    private_key = file("~/.ssh/id_ed25519")
+    host        = split("/", var.kubernetes_server_ip)[0]
+  }
+  provisioner "file" {
+    content     = tls_locally_signed_cert.kubernetes_server.cert_pem
+    destination = "/etc/ssl/certs/apiserver.crt"
+  }
+  provisioner "file" {
+    content     = tls_private_key.kubernetes_server.private_key_pem
+    destination = "/etc/ssl/certs/apiserver.key"
+  }
+  provisioner "file" {
+    content     = tls_locally_signed_cert.apiserver-kubelet-client.cert_pem
+    destination = "/etc/ssl/certs/apiserver-kubelet-client.crt"
+  }
+  provisioner "file" {
+    content     = tls_private_key.apiserver-kubelet-client.private_key_pem
+    destination = "/etc/ssl/certs/apiserver-kubelet-client.key"
+  }
+  provisioner "file" {
+    content     = var.ca_cert_pem
+    destination = "/etc/ssl/certs/ca.crt"
+  }
+  provisioner "remote-exec" {
+    script = "${path.module}/scripts/install_k8s_server.sh"
+  }
+}
+
+#data "external" "k3s_node_token" {
+#  depends_on = [proxmox_vm_qemu.kubernetes_server]
+#  program = [
+#    "ssh",
+#    "-o", "StrictHostKeyChecking=no",
+#    "root@${split("/", var.kubernetes_server_ip)[0]}",
+#    "cat /var/lib/rancher/k3s/server/node-token | jq -R '{token: .}'",
+#  ]
+#}
+#output "kubernetes_node_token" {
+#  value = data.external.k3s_node_token.result.token
+#}
+
+#resource "null_resource" "node_labels" {
+#  depends_on = [
+#    proxmox_vm_qemu.kubernetes_server,
+#    proxmox_vm_qemu.kubernetes_node_one,
+#    proxmox_vm_qemu.kubernetes_node_two,
+#  ]
+#
+#  connection {
+#    type        = "ssh"
+#    user        = var.user
+#    private_key = file("~/.ssh/id_ed25519")
+#    host        = split("/", var.kubernetes_server_ip)[0]
+#  }
+#
+#  provisioner "remote-exec" {
+#    inline = [
+#      "kubectl label node kubernetes-node-one node-role.kubernetes.io/worker=true",
+#      "kubectl label node kubernetes-node-two node-role.kubernetes.io/worker=true",
+#    ]
+#  }
+#}
+
+output "kubernetes_server_ip" {
+  value = split("/", var.kubernetes_server_ip)[0]
+}
