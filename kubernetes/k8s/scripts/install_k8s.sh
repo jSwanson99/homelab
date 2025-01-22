@@ -59,3 +59,9 @@ sudo systemctl start kubelet
 
 sudo kubeadm init phase preflight --dry-run
 kubeadm config images pull
+
+# Required for cilium
+firewall-cmd --permanent --add-port=4789/udp # VXLAN
+sudo firewall-cmd --permanent --add-port=4244/tcp
+sudo firewall-cmd --permanent --add-port=8472/tcp
+sudo firewall-cmd --reload

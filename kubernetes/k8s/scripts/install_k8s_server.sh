@@ -10,6 +10,7 @@ sudo firewall-cmd --permanent --add-port=10251/tcp  # kube-scheduler
 sudo firewall-cmd --permanent --add-port=10252/tcp  # kube-controller-manager still needed?
 sudo firewall-cmd --permanent --add-port=10257/tcp  # kube-controller-manager
 sudo firewall-cmd --permanent --add-port=12000/tcp  # hubble
+sudo firewall-cmd --permanent --add-port=8472/udp
 sudo firewall-cmd --reload
 
 # Init Cluster
@@ -42,8 +43,12 @@ helm repo update
 helm install cilium cilium/cilium \
 	--namespace kube-system \
 	--set kubeProxyReplacement=true \
-  --set k8sServiceHost=192.168.1.30 \
-  --set k8sServicePort=6443
+	--set ipam.operator.clusterPoolIPv4PodCIDRList="10.244.0.0/16" \
+	--set k8sServiceHost=192.168.1.30 \
+	--set k8sServicePort=6443 \
+	--set hubble.tls.auto.enabled=true \
+	--set hubble.relay.enabled=true \
+	--set hubble.ui.enabled=true
 
 # Cilium CLI
 CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)

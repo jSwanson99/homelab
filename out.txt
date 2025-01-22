@@ -1,0 +1,143 @@
+diff --git a/kubernetes/k8s/kubernetes_server.tf b/kubernetes/k8s/kubernetes_server.tf
+index ab009ae..46fad2e 100644
+--- a/kubernetes/k8s/kubernetes_server.tf
++++ b/kubernetes/k8s/kubernetes_server.tf
+@@ -1,3 +1,37 @@
++resource "tls_private_key" "kubernetes_server" {
++  algorithm = "RSA"
++  rsa_bits  = 2048
++}
++resource "tls_cert_request" "kubernetes_server" {
++  private_key_pem = tls_private_key.kubernetes_server.private_key_pem
++  subject {
++    common_name  = "kubernetes_server"
++    country      = "US"
++    organization = "JonCorpIncLLC"
++  }
++  dns_names = [
++    "*.hubble-relay.cilium.io",
++    "*.hubble-grpc.cilium.io",
++    "*.hubble-ui.cilium.io"
++  ]
++  ip_addresses = [
++    "127.0.0.1",
++    split("/", var.kubernetes_server_ip)[0]
++  ]
++}
++resource "tls_locally_signed_cert" "kubernetes_server" {
++  cert_request_pem      = tls_cert_request.kubernetes_server.cert_request_pem
++  ca_private_key_pem    = var.ca_private_key_pem
++  ca_cert_pem           = var.ca_cert_pem
++  validity_period_hours = 43800
++  allowed_uses = [
++    "digital_signature",
++    "key_encipherment",
++    "server_auth",
++    "client_auth",
++  ]
++}
++
+ resource "proxmox_vm_qemu" "kubernetes_server" {
+   name        = "kubernetes-server"
+   target_node = "pve"
+@@ -61,6 +95,15 @@ EOF
+     content     = var.ca_private_key_pem
+     destination = "/etc/kubernetes/pki/ca.key"
+   }
++  # Hubble needs
++  provisioner "file" {
++    content     = tls_locally_signed_cert.kubernetes_server.cert_pem
++    destination = "/etc/ssl/certs/server.crt"
++  }
++  provisioner "file" {
++    content     = tls_private_key.kubernetes_server.private_key_pem
++    destination = "/etc/ssl/certs/server.key"
++  }
+   provisioner "remote-exec" {
+     script = "${path.module}/scripts/install_k8s.sh"
+   }
+diff --git a/kubernetes/k8s/postgres_user_kubernetes.tf b/kubernetes/k8s/postgres_user_kubernetes.tf
+deleted file mode 100644
+index 139597f..0000000
+--- a/kubernetes/k8s/postgres_user_kubernetes.tf
++++ /dev/null
+@@ -1,2 +0,0 @@
+-
+-
+diff --git a/kubernetes/k8s/scripts/install_k8s.sh b/kubernetes/k8s/scripts/install_k8s.sh
+index 342b246..527fb19 100644
+--- a/kubernetes/k8s/scripts/install_k8s.sh
++++ b/kubernetes/k8s/scripts/install_k8s.sh
+@@ -59,3 +59,7 @@ sudo systemctl start kubelet
+ 
+ sudo kubeadm init phase preflight --dry-run
+ kubeadm config images pull
++
++# Required for cilium
++sudo firewall-cmd --permanent --add-port=4244/tcp
++sudo firewall-cmd --reload
+diff --git a/kubernetes/k8s/scripts/install_k8s_server.sh b/kubernetes/k8s/scripts/install_k8s_server.sh
+index a07284b..aad5507 100644
+--- a/kubernetes/k8s/scripts/install_k8s_server.sh
++++ b/kubernetes/k8s/scripts/install_k8s_server.sh
+@@ -10,6 +10,7 @@ sudo firewall-cmd --permanent --add-port=10251/tcp  # kube-scheduler
+ sudo firewall-cmd --permanent --add-port=10252/tcp  # kube-controller-manager still needed?
+ sudo firewall-cmd --permanent --add-port=10257/tcp  # kube-controller-manager
+ sudo firewall-cmd --permanent --add-port=12000/tcp  # hubble
++sudo firewall-cmd --permanent --add-port=8472/udp
+ sudo firewall-cmd --reload
+ 
+ # Init Cluster
+@@ -35,6 +36,16 @@ sudo systemctl restart systemd-modules-load.service
+ curl -LO https://get.helm.sh/helm-v3.17.0-linux-amd64.tar.gz
+ tar -zxvf helm-v3*.tar.gz
+ mv linux-amd64/helm /usr/local/bin/helm
++ 
++# Create secrets for certs
++kubectl create secret tls hubble-tls \
++  --cert=/etc/ssl/certs/server.cert \
++  --key=/etc/ssl/certs/server.key \
++  -n kube-system
++
++kubectl create secret generic hubble-ca-cert \
++  --from-file=ca.crt=/etc/ssl/certs/ca.crt \
++  -n kube-system
+ 
+ # Cilium CNI
+ helm repo add cilium https://helm.cilium.io/
+@@ -42,8 +53,18 @@ helm repo update
+ helm install cilium cilium/cilium \
+ 	--namespace kube-system \
+ 	--set kubeProxyReplacement=true \
+-  --set k8sServiceHost=192.168.1.30 \
+-  --set k8sServicePort=6443
++	--set ipam.operator.clusterPoolIPv4PodCIDRList="10.244.0.0/16" \
++	--set k8sServiceHost=192.168.1.30 \
++	--set k8sServicePort=6443 \
++	--set hubble.tls.auto.enabled=false \
++	--set hubble.tls.server.cert="hubble-tls" \
++	--set hubble.tls.server.key="hubble-tls" \
++	--set hubble.tls.ca.cert="ca-cert"
++
++# \
++#	--set hubble.tls.auto.method=helm \
++#	--set hubble.tls.auto.certValidityDuration=1095 \
++
+ 
+ # Cilium CLI
+ CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
+@@ -59,3 +80,14 @@ cilium hubble enable --ui
+ curl -L --remote-name-all https://github.com/cilium/hubble/releases/latest/download/hubble-linux-amd64.tar.gz
+ tar xzvf hubble-linux-amd64.tar.gz
+ sudo mv hubble /usr/local/bin
++
++# Testing
++
++
++
++
++
++
++
++
++
