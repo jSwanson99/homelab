@@ -61,6 +61,10 @@ EOF
     content     = var.ca_private_key_pem
     destination = "/etc/kubernetes/pki/ca.key"
   }
+  provisioner "file" {
+    source      = "${path.module}/manifests"
+    destination = "/tmp/"
+  }
   provisioner "remote-exec" {
     script = "${path.module}/scripts/install_k8s.sh"
   }

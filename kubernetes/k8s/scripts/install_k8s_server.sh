@@ -48,7 +48,8 @@ helm install cilium cilium/cilium \
 	--set k8sServicePort=6443 \
 	--set hubble.tls.auto.enabled=true \
 	--set hubble.relay.enabled=true \
-	--set hubble.ui.enabled=true
+	--set hubble.ui.enabled=true \
+	--set hubble.relay.tls.server.enabled=true
 
 # Cilium CLI
 CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
@@ -64,3 +65,4 @@ cilium hubble enable --ui
 curl -L --remote-name-all https://github.com/cilium/hubble/releases/latest/download/hubble-linux-amd64.tar.gz
 tar xzvf hubble-linux-amd64.tar.gz
 sudo mv hubble /usr/local/bin
+
