@@ -55,6 +55,8 @@ sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
 rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 cilium install --version 1.16.6 \
+	--set kubeProxyReplacement=true \
+	--set l7Proxy=true \
 	--set ingressController.enabled=true \
 	--set ingressController.loadbalancerMode=dedicated \
 	--set loadBalancer.l7.backend=envoy
