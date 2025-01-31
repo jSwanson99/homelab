@@ -3,6 +3,8 @@ set -e  # Exit on any error
 set -o pipefail  # Exit if any command in a pipe fails
 exec 1> >(tee -a "/tmp/kubernetes_server_install.log") 2>&1
 
+kubernetes_server_ip=$1
+
 firewall-cmd --permanent --add-port=6443/tcp  # API server
 firewall-cmd --permanent --add-port=2379-2380/tcp  # etcd
 firewall-cmd --permanent --add-port=10251/tcp  # kube-scheduler
@@ -20,7 +22,7 @@ sudo kubeadm init \
 	--pod-network-cidr=10.0.0.0/16 \
 	--service-cidr=10.96.0.0/16 \
 	--skip-phases=addon/kube-proxy \
-	--apiserver-advertise-address=192.168.1.30
+	--apiserver-advertise-address="$kubernetes_server_ip"
 
 export KUBECONFIG=/etc/kubernetes/admin.conf
 mkdir -p $HOME/.kube

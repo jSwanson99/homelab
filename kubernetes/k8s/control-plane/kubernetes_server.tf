@@ -64,10 +64,18 @@ EOF
   provisioner "remote-exec" {
     script = "${path.module}/../scripts/install_k8s.sh"
   }
+  provisioner "file" {
+    source      = "${path.module}/install_k8s_server.sh"
+    destination = "/tmp/install_k8s_server.sh"
+  }
   provisioner "remote-exec" {
-    script = "${path.module}/install_k8s_server.sh"
+    inline = [
+      "chmod +x /tmp/install_k8s_server.sh",
+      "bash /tmp/install_k8s_server.sh ${split("/", var.kubernetes_server_ip)[0]}"
+    ]
   }
 }
+
 data "external" "k8s_join_cmd" {
   depends_on = [proxmox_vm_qemu.kubernetes_server]
   program = [
