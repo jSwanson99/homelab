@@ -45,6 +45,10 @@ module "kubernetes" {
   kubernetes_server_ip   = var.kubernetes_server_ip
   kubernetes_node_one_ip = var.kubernetes_node_one_ip
   kubernetes_node_two_ip = var.kubernetes_node_two_ip
+  argocd_ip              = var.argocd_ip
+  hubble_ip              = var.hubble_ip
+  dashboard_ip           = var.dashboard_ip
+  k8s_app_ip_range       = var.k8s_app_ip_range
 
   ca_private_key_pem = tls_private_key.ca.private_key_pem
   ca_cert_pem        = tls_self_signed_cert.ca.cert_pem

@@ -15,24 +15,36 @@ variable "gateway_ip" {
   default     = "192.168.1.1"
 }
 variable "pg_vault_ip" {
-  description = "IP of VM for Postgres and Vault"
-  type        = string
-  default     = "192.168.1.20/24"
+  type    = string
+  default = "192.168.1.20/24"
 }
 variable "kubernetes_server_ip" {
-  description = "IP of VM for Postgres and Vault"
-  type        = string
-  default     = "192.168.1.30/24"
+  type    = string
+  default = "192.168.1.30/24"
 }
 variable "kubernetes_node_one_ip" {
-  description = "IP of VM for Postgres and Vault"
-  type        = string
-  default     = "192.168.1.31/24"
+  type    = string
+  default = "192.168.1.31/24"
 }
 variable "kubernetes_node_two_ip" {
-  description = "IP of VM for Postgres and Vault"
-  type        = string
-  default     = "192.168.1.32/24"
+  type    = string
+  default = "192.168.1.32/24"
+}
+variable "k8s_app_ip_range" {
+  type    = string
+  default = "192.168.1.240-192.168.1.255"
+}
+variable "argocd_ip" {
+  type    = string
+  default = "192.168.1.255/24"
+}
+variable "hubble_ip" {
+  type    = string
+  default = "192.168.1.254/24"
+}
+variable "dashboard_ip" {
+  type    = string
+  default = "192.168.1.253/24"
 }
 
 variable "pg_database_kubernetes" {

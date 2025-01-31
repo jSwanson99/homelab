@@ -25,7 +25,7 @@ metadata:
  namespace: metallb-system
 spec:
  addresses:
- - 192.168.1.240-192.168.1.250 
+ - ${k8s_app_ip_range}
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
@@ -41,4 +41,21 @@ EOF
 # Change from ClusterIP -> Loadbalancer so its accessible via static ip outside cluster
 kubectl patch service hubble-ui \
 	-n kube-system \
-	-p '{"spec": {"type": "LoadBalancer", "loadBalancerIP": "192.168.1.245"}}'
+	-p '{"spec": {"type": "LoadBalancer", "loadBalancerIP": "${hubble_ip}"}}'
+
+# Install argocd
+kubectl create namespace argocd
+kubectl apply \
+	-n argocd \
+	-f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl patch svc argocd-server \
+	-n argocd \
+	-p '{"spec": {"type": "LoadBalancer", "loadBalancerIP": "${argocd_ip}"}}'
+
+# Argo CLI
+curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+rm -f argocd-linux-amd64
+
+
+

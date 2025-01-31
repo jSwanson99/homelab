@@ -56,10 +56,19 @@ variable "kubernetes_node_one_ip" {
 variable "kubernetes_node_two_ip" {
   type = string
 }
-
-locals {
-  pg_dsl_kubernetes = "postgres://${var.pg_user_kubernetes}:${var.pg_password_kubernetes}@${var.pg_vault_ip}:5432/${var.pg_database_kubernetes}"
+variable "k8s_app_ip_range" {
+  type = string
 }
+variable "argocd_ip" {
+  type = string
+}
+variable "hubble_ip" {
+  type = string
+}
+variable "dashboard_ip" {
+  type = string
+}
+
 variable "ca_private_key_pem" {
   type      = string
   sensitive = true

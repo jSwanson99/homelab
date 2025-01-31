@@ -32,6 +32,7 @@ module "worker_two" {
   join_cmd           = module.server.join_cmd
 }
 
+// Once the cluster is ready, install hubble, argocd, dashboard
 resource "null_resource" "bootstrap_k8s" {
   depends_on = [
     module.server,
@@ -44,8 +45,28 @@ resource "null_resource" "bootstrap_k8s" {
     private_key = file("~/.ssh/id_ed25519")
     host        = split("/", var.kubernetes_server_ip)[0]
   }
+  provisioner "file" {
+    content = templatefile("${path.module}/scripts/install_dashboards.sh", {
+      argocd_ip        = split("/", var.argocd_ip)[0]
+      hubble_ip        = split("/", var.hubble_ip)[0]
+      k8s_app_ip_range = split("/", var.k8s_app_ip_range)[0]
+    })
+    destination = "/tmp/install_dashboards.sh"
+  }
   provisioner "remote-exec" {
-    script = "${path.module}/scripts/install_dashboards.sh"
+    inline = [
+      "chmod +x /tmp/install_dashboards.sh",
+      "bash /tmp/install_dashboards.sh"
+    ]
   }
 }
 
+data "external" "argocd_pw" {
+  depends_on = [null_resource.bootstrap_k8s]
+  program = [
+    "ssh",
+    "-o", "StrictHostKeyChecking=no",
+    "root@${split("/", var.kubernetes_server_ip)[0]}",
+    "argocd admin initial-password -n argocd | head -n 1 | jq '{value: .}' -R -c",
+  ]
+}
