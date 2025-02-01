@@ -1,17 +1,18 @@
-resource "proxmox_vm_qemu" "TEMPLATE" {
-  name        = "TEMPLATE"
+resource "proxmox_vm_qemu" "nginx" {
+  name        = "nginx"
   target_node = "pve"
   clone       = var.vm_template_id
+  full_clone  = true
   cores       = 2
-  memory      = 2048
+  memory      = 4096
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
   boot        = "order=scsi0;ide2"
 
-  ipconfig0 = "ip=${var.TEMPLATE_ip},gw=${var.gateway_ip}"
+  ipconfig0 = "ip=${var.nginx_ip},gw=${var.gateway_ip}"
   ciuser    = var.user
   sshkeys   = <<EOF
-${var.public_key}
+${file("~/.ssh/id_ed25519.pub")}
 EOF
 
   disks {
@@ -44,17 +45,17 @@ EOF
   connection {
     type        = "ssh"
     user        = var.user
-    private_key = var.private_key
-    host        = split("/", var.TEMPLATE_ip)[0]
+    private_key = file("~/.ssh/id_ed25519")
+    host        = split("/", var.nginx_ip)[0]
   }
   provisioner "remote-exec" {
-    script = "${path.module}/../TEMPLATE/provision.sh"
-  }
-  provisioner "remote-exec" {
-    script = "${path.module}/../TEMPLATE/startup.sh"
+    inline = [
+      "dnf update -y",
+      "sudo dnf -y install podman"
+    ]
   }
 }
 
-output "TEMPLATE_ip" {
-  value = split("/", var.TEMPLATE_ip)[0]
+output "nginx_ip" {
+  value = split("/", var.nginx_ip)[0]
 }

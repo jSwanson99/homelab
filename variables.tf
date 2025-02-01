@@ -18,6 +18,19 @@ variable "pg_vault_ip" {
   type    = string
   default = "192.168.1.20/24"
 }
+variable "truenas_ip" {
+  type    = string
+  default = "192.168.1.21/24"
+}
+variable "coredns_ip" {
+  type    = string
+  default = "192.168.1.22/24"
+}
+variable "nginx_ip" {
+  type    = string
+  default = "192.168.1.23/24"
+}
+
 variable "kubernetes_server_ip" {
   type    = string
   default = "192.168.1.30/24"
@@ -30,6 +43,7 @@ variable "kubernetes_node_two_ip" {
   type    = string
   default = "192.168.1.32/24"
 }
+
 variable "k8s_app_ip_range" {
   type    = string
   default = "192.168.1.240-192.168.1.255"

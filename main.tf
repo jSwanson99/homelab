@@ -1,3 +1,19 @@
+module "storage" {
+  source         = "./storage"
+  user           = var.user
+  gateway_ip     = var.gateway_ip
+  vm_template_id = var.vm_template_id
+  truenas_ip     = var.truenas_ip
+}
+module "routing" {
+  source         = "./routing"
+  user           = var.user
+  gateway_ip     = var.gateway_ip
+  vm_template_id = var.vm_template_id
+  coredns_ip     = var.coredns_ip
+  nginx_ip       = var.nginx_ip
+}
+
 module "bootstrap" {
   source      = "./bootstrap"
   user        = var.user
