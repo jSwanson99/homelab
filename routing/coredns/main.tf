@@ -54,7 +54,7 @@ EOF
   }
   provisioner "file" {
     content = templatefile("${path.module}/Corefile.tftpl", {
-      coredns_ip = split("/", var.coredns_ip)[0]
+      hosts_entries = var.hosts_entries
     })
     destination = "/etc/coredns/Corefile"
   }

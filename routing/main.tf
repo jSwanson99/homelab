@@ -5,4 +5,5 @@ module "coredns" {
   gateway_ip     = var.gateway_ip
   vm_template_id = var.vm_template_id
   coredns_ip     = var.coredns_ip
+  hosts_entries  = var.hosts_entries
 }
