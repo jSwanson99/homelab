@@ -2,6 +2,9 @@ resource "null_resource" "Corefile" {
   depends_on = [
     proxmox_vm_qemu.coredns
   ]
+  triggers = {
+    hosts = var.hosts_entries
+  }
   connection {
     type        = "ssh"
     user        = var.user

@@ -50,7 +50,7 @@ variable "k8s_app_ip_range" {
 }
 variable "argocd_ip" {
   type    = string
-  default = "192.168.1.255/24"
+  default = "192.168.1.253/24"
 }
 variable "hubble_ip" {
   type    = string
@@ -58,7 +58,7 @@ variable "hubble_ip" {
 }
 variable "dashboard_ip" {
   type    = string
-  default = "192.168.1.253/24"
+  default = "192.168.1.252/24"
 }
 
 variable "pg_database_kubernetes" {
