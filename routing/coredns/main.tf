@@ -1,3 +1,4 @@
+# Creates CoreDNS
 resource "proxmox_vm_qemu" "coredns" {
   name        = "coredns"
   target_node = "pve"
@@ -53,9 +54,7 @@ EOF
     script = "${path.module}/provision.sh"
   }
   provisioner "file" {
-    content = templatefile("${path.module}/Corefile.tftpl", {
-      hosts_entries = var.hosts_entries
-    })
+    content     = var.corefile
     destination = "/etc/coredns/Corefile"
   }
   provisioner "file" {

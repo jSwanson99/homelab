@@ -1,9 +1,10 @@
+# Update the existing Coredns service's corefile and bounces
 resource "null_resource" "Corefile" {
   depends_on = [
     proxmox_vm_qemu.coredns
   ]
   triggers = {
-    hosts = var.hosts_entries
+    hosts = var.corefile
   }
   connection {
     type        = "ssh"
@@ -12,7 +13,7 @@ resource "null_resource" "Corefile" {
     host        = split("/", var.coredns_ip)[0]
   }
   provisioner "file" {
-    content     = var.hosts_entries
+    content     = var.corefile
     destination = "/etc/coredns/Corefile"
   }
   provisioner "remote-exec" {

@@ -15,6 +15,6 @@ variable "coredns_ip" {
 variable "nginx_ip" {
   type = string
 }
-variable "hosts_entries" {
+variable "corefile" {
   type = string
 }

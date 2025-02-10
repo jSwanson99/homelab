@@ -12,6 +12,6 @@ variable "gateway_ip" {
 variable "coredns_ip" {
   type = string
 }
-variable "hosts_entries" {
+variable "corefile" {
   type = string
 }
