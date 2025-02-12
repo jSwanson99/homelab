@@ -6,3 +6,4 @@
 **/providers.tf
 state/
 -target*
+gitops

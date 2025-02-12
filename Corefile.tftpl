@@ -1,4 +1,4 @@
-. {
+jds.net {
   hosts {
 		${gateway_ip} pfsense.jds.net
 		192.168.1.2 wireless.jds.net
@@ -12,9 +12,11 @@
 		${argocd_ip}	 argo.jds.net
 		${hubble_ip} hubble.jds.net
 		${dashboard_ip} k8s.jds.net
-
     fallthrough
   }
+}
+
+. {
 	forward . tls://185.222.222.222 tls://45.11.45.11 {
 		tls_servername dns.sb
 		health_check 5s

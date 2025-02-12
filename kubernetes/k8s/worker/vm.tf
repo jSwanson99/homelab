@@ -48,6 +48,10 @@ EOF
     private_key = file("~/.ssh/id_ed25519")
     host        = split("/", var.kubernetes_node_ip)[0]
   }
+  provisioner "file" {
+    source      = "${path.module}/config.yaml"
+    destination = "/var/lib/kubelet/config.yaml"
+  }
   provisioner "remote-exec" {
     script = "${path.module}/../scripts/install_k8s.sh"
   }

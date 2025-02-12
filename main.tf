@@ -13,7 +13,7 @@ module "routing" {
   vm_template_id = var.vm_template_id
   coredns_ip     = var.coredns_ip
   nginx_ip       = var.nginx_ip
-  hosts_entries = templatefile("Corefile.tftpl", {
+  corefile = templatefile("Corefile.tftpl", {
     gateway_ip             = split("/", var.gateway_ip)[0]
     argocd_ip              = split("/", var.argocd_ip)[0]
     coredns_ip             = split("/", var.coredns_ip)[0]

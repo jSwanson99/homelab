@@ -46,6 +46,10 @@ resource "null_resource" "bootstrap_k8s" {
     host        = split("/", var.kubernetes_server_ip)[0]
   }
   provisioner "file" {
+    source      = "${path.module}/all_apps.yaml"
+    destination = "/tmp/all_apps.yaml"
+  }
+  provisioner "file" {
     content = templatefile("${path.module}/scripts/install_dashboards.sh", {
       argocd_ip        = split("/", var.argocd_ip)[0]
       hubble_ip        = split("/", var.hubble_ip)[0]

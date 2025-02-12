@@ -55,6 +55,13 @@ data:
   repositories: |
     - url: https://github.com/jSwanson99/homelab-gitops
       type: git
+  resource.exclusions: |
+    - apiGroups:
+      - cilium.io
+      kinds:
+      - CiliumIdentity
+      clusters:
+      - "*"
 EOF
 kubectl apply \
 	-n argocd \
@@ -77,3 +84,7 @@ argocd login ${argocd_ip} --insecure \
 	--username admin \
 	--password $(argocd admin initial-password -n argocd | head -n 1)
 argocd repo add https://github.com/jSwanson99/homelab-gitops.git
+
+echo "Configuring github sync"
+kubectl apply -f /tmp/all_apps.yaml -n argocd
+
