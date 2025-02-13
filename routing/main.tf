@@ -6,3 +6,11 @@ module "coredns" {
   coredns_ip     = var.coredns_ip
   corefile       = var.corefile
 }
+
+module "nginx" {
+  source         = "./nginx"
+  user           = var.user
+  gateway_ip     = var.gateway_ip
+  vm_template_id = var.vm_template_id
+  nginx_ip       = var.nginx_ip
+}
