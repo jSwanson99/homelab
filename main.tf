@@ -25,6 +25,8 @@ module "routing" {
     nginx_ip               = split("/", var.nginx_ip)[0]
     truenas_ip             = split("/", var.truenas_ip)[0]
   })
+  ca_private_key_pem = tls_private_key.ca.private_key_pem
+  ca_cert_pem        = tls_self_signed_cert.ca.cert_pem
 }
 
 module "bootstrap" {

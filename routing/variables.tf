@@ -18,3 +18,11 @@ variable "nginx_ip" {
 variable "corefile" {
   type = string
 }
+variable "ca_private_key_pem" {
+  type      = string
+  sensitive = true
+}
+variable "ca_cert_pem" {
+  type      = string
+  sensitive = true
+}

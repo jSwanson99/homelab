@@ -54,6 +54,20 @@ EOF
   provisioner "remote-exec" {
     script = "${path.module}/provision.sh"
   }
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p /etc/pki/nginx",
+      "mkdir -p /etc/pki/nginx/private",
+    ]
+  }
+  provisioner "file" {
+    content     = tls_locally_signed_cert.nginx.cert_pem
+    destination = "/etc/pki/nginx/server.crt"
+  }
+  provisioner "file" {
+    content     = tls_private_key.nginx.private_key_pem
+    destination = "/etc/pki/nginx/private/server.key"
+  }
   provisioner "file" {
     source      = "${path.module}/html"
     destination = "/usr/share/nginx/html"
