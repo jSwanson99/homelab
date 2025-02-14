@@ -12,6 +12,9 @@ variable "gateway_ip" {
 variable "nginx_ip" {
   type = string
 }
+variable "coredns_ip" {
+  type = string
+}
 variable "ca_private_key_pem" {
   type      = string
   sensitive = true

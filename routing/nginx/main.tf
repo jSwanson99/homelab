@@ -58,7 +58,21 @@ EOF
     inline = [
       "mkdir -p /etc/pki/nginx",
       "mkdir -p /etc/pki/nginx/private",
+      "mkdir -p /etc/nginx/ssl/certs",
+      "mkdir -p /etc/pki/nginx/ca",
     ]
+  }
+  provisioner "file" {
+    source      = "${path.module}/sign.sh"
+    destination = "/etc/pki/nginx/sign.sh"
+  }
+  provisioner "file" {
+    content     = tls_locally_signed_cert.intermediate_ca.cert_pem
+    destination = "/etc/pki/nginx/ca/ca.crt"
+  }
+  provisioner "file" {
+    content     = tls_private_key.intermediate_ca.private_key_pem
+    destination = "/etc/pki/nginx/ca/ca.key"
   }
   provisioner "file" {
     content     = tls_locally_signed_cert.nginx.cert_pem
@@ -73,7 +87,9 @@ EOF
     destination = "/usr/share/nginx/html"
   }
   provisioner "file" {
-    source      = "${path.module}/nginx.conf"
+    content = templatefile("${path.module}/nginx.conf", {
+      coredns_ip = split("/", var.coredns_ip)[0]
+    })
     destination = "/etc/nginx/nginx.conf"
   }
   provisioner "file" {
