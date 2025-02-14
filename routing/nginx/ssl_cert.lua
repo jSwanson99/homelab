@@ -1,4 +1,5 @@
 local domain = ssl.server_name()
+
 if not domain or domain == "" then
 	return
 end

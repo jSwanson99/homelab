@@ -26,7 +26,7 @@ variable "coredns_ip" {
   type    = string
   default = "192.168.1.22/24"
 }
-variable "nginx_ip" {
+variable "forward_proxy_ip" {
   type    = string
   default = "192.168.1.23/24"
 }

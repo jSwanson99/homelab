@@ -88,9 +88,10 @@ EOF
   }
   provisioner "file" {
     content = templatefile("${path.module}/nginx.conf", {
-      coredns_ip = split("/", var.coredns_ip)[0]
+      coredns_ip   = split("/", var.coredns_ip)[0],
+      ssl_cert_lua = file("${path.module}/ssl_cert.lua")
     })
-    destination = "/etc/nginx/nginx.conf"
+    destination = "/usr/local/openresty/nginx/conf/nginx.conf"
   }
   provisioner "file" {
     source      = "${path.module}/nginx.service"

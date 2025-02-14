@@ -7,12 +7,12 @@ module "storage" {
 }
 
 module "routing" {
-  source         = "./routing"
-  user           = var.user
-  gateway_ip     = var.gateway_ip
-  vm_template_id = var.vm_template_id
-  coredns_ip     = var.coredns_ip
-  nginx_ip       = var.nginx_ip
+  source           = "./routing"
+  user             = var.user
+  gateway_ip       = var.gateway_ip
+  vm_template_id   = var.vm_template_id
+  coredns_ip       = var.coredns_ip
+  forward_proxy_ip = var.forward_proxy_ip
   corefile = templatefile("Corefile.tftpl", {
     gateway_ip             = split("/", var.gateway_ip)[0]
     argocd_ip              = split("/", var.argocd_ip)[0]
@@ -22,7 +22,7 @@ module "routing" {
     kubernetes_server_ip   = split("/", var.kubernetes_server_ip)[0]
     kubernetes_node_one_ip = split("/", var.kubernetes_node_one_ip)[0]
     kubernetes_node_two_ip = split("/", var.kubernetes_node_two_ip)[0]
-    nginx_ip               = split("/", var.nginx_ip)[0]
+    nginx_ip               = split("/", var.forward_proxy_ip)[0]
     truenas_ip             = split("/", var.truenas_ip)[0]
   })
   ca_private_key_pem = tls_private_key.ca.private_key_pem
