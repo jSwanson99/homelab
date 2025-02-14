@@ -1,0 +1,12 @@
+listen_host: '0.0.0.0'
+listen_port: 8080
+
+web_host: '0.0.0.0'
+web_port: 8081
+
+mode: transparent # regular, transparent
+
+ssl_insecure: false
+
+#ignore_hosts: ['example.com', '*.google.com']
+allow_hosts: ['*']

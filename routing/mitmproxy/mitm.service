@@ -1,0 +1,18 @@
+[Unit]
+Description=Mitmproxy HTTPS intercepting proxy
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop mitmproxy
+ExecStartPre=-/usr/bin/docker rm mitmproxy
+ExecStart=/usr/bin/docker run --rm -it \
+	-p 8080:8080 \
+	-p 0.0.0.0:8081:8081 \
+	mitmproxy/mitmproxy mitmweb \
+	--web-host 0.0.0.0
+
+[Install]
+WantedBy=multi-user.target
