@@ -83,10 +83,6 @@ EOF
     destination = "/etc/pki/nginx/private/server.key"
   }
   provisioner "file" {
-    source      = "${path.module}/html"
-    destination = "/usr/share/nginx/html"
-  }
-  provisioner "file" {
     content = templatefile("${path.module}/nginx.conf", {
       coredns_ip   = split("/", var.coredns_ip)[0],
       ssl_cert_lua = file("${path.module}/ssl_cert.lua")

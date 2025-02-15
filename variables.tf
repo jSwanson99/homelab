@@ -6,7 +6,7 @@ variable "lxc_template_id" {
 variable "vm_template_id" {
   description = "ID of VM Template to Clone"
   type        = string
-  default     = "rocky-template-vm"
+  default     = "rocky-vm-templ"
 }
 
 variable "gateway_ip" {

@@ -14,6 +14,7 @@ module "coredns" {
 #  vm_template_id   = var.vm_template_id
 #  forward_proxy_ip = var.forward_proxy_ip
 #}
+
 module "nginx" {
   source             = "./nginx"
   user               = var.user
