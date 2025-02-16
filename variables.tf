@@ -14,6 +14,10 @@ variable "gateway_ip" {
   type        = string
   default     = "192.168.1.1"
 }
+variable "proxmox_ip" {
+  type    = string
+  default = "192.168.1.10"
+}
 variable "pg_vault_ip" {
   type    = string
   default = "192.168.1.20/24"

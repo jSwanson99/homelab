@@ -6,6 +6,9 @@ variable "user" {
   type      = string
   sensitive = true
 }
+variable "proxmox_ip" {
+  type = string
+}
 variable "gateway_ip" {
   type = string
 }

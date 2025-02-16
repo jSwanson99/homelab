@@ -91,6 +91,12 @@ EOF
     destination = "/usr/local/openresty/nginx/conf/nginx.conf"
   }
   provisioner "file" {
+    content = templatefile("${path.module}/conf.d/pve.conf", {
+      proxmox_ip = "${var.proxmox_ip}"
+    })
+    destination = "/etc/nginx/conf.d/pve.conf"
+  }
+  provisioner "file" {
     source      = "${path.module}/nginx.service"
     destination = "/etc/systemd/system/nginx.service"
   }

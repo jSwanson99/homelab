@@ -9,6 +9,9 @@ variable "user" {
 variable "gateway_ip" {
   type = string
 }
+variable "proxmox_ip" {
+  type = string
+}
 variable "nginx_ip" {
   type = string
 }
