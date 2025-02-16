@@ -62,6 +62,7 @@ EOF
       "mkdir -p /etc/pki/nginx/ca",
     ]
   }
+  # {{{
   provisioner "file" {
     source      = "${path.module}/sign.sh"
     destination = "/etc/pki/nginx/sign.sh"
@@ -81,7 +82,7 @@ EOF
   provisioner "file" {
     content     = tls_private_key.nginx.private_key_pem
     destination = "/etc/pki/nginx/private/server.key"
-  }
+  } # }}}
   provisioner "file" {
     content = templatefile("${path.module}/nginx.conf", {
       coredns_ip   = split("/", var.coredns_ip)[0],
