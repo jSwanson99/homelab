@@ -86,15 +86,10 @@ EOF
   provisioner "file" {
     content = templatefile("${path.module}/nginx.conf", {
       coredns_ip   = split("/", var.coredns_ip)[0],
-      ssl_cert_lua = file("${path.module}/ssl_cert.lua")
+      ssl_cert_lua = file("${path.module}/ssl_cert.lua"),
+      proxmox_ip   = split("/", var.proxmox_ip)[0],
     })
     destination = "/usr/local/openresty/nginx/conf/nginx.conf"
-  }
-  provisioner "file" {
-    content = templatefile("${path.module}/conf.d/pve.conf", {
-      proxmox_ip = "${var.proxmox_ip}"
-    })
-    destination = "/etc/nginx/conf.d/pve.conf"
   }
   provisioner "file" {
     source      = "${path.module}/nginx.service"
