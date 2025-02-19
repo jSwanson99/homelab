@@ -4,9 +4,9 @@ set -o pipefail
 exec 1> >(tee -a "/tmp/kubernetes_install.log") 2>&1
 
 echo "Starting update"
-dnf install -y curl tar telnet iputils
-dnf clean all
 dnf update -y
+dnf install -y curl tar telnet iputils nfs-utils
+dnf clean all
 echo "Update finished"
 
 swapoff -a
@@ -62,9 +62,13 @@ systemctl enable kubelet
 systemctl start kubelet
 
 # Required for cilium
+firewall-cmd --permanent --add-port=80/udp 
+firewall-cmd --permanent --add-port=443/udp
 firewall-cmd --permanent --add-port=4789/udp # VXLAN
 firewall-cmd --permanent --add-port=4244/tcp
 firewall-cmd --permanent --add-port=8472/udp
 firewall-cmd --permanent --add-port=10250/tcp  # Kubelet API
 firewall-cmd --permanent --add-port=4240/tcp  # Cilium Health Check
+firewall-cmd --permanent --add-port=7946/tcp
+firewall-cmd --permanent --add-port=7946/udp
 firewall-cmd --reload

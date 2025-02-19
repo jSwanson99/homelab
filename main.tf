@@ -1,3 +1,7 @@
+module "pki" {
+  source = "./pki"
+}
+
 module "storage" {
   source         = "./storage"
   user           = var.user
@@ -26,8 +30,8 @@ module "routing" {
     nginx_ip               = split("/", var.forward_proxy_ip)[0]
     truenas_ip             = split("/", var.truenas_ip)[0]
   })
-  ca_private_key_pem = tls_private_key.ca.private_key_pem
-  ca_cert_pem        = tls_self_signed_cert.ca.cert_pem
+  ca_private_key_pem = module.pki.pki_ca_key
+  ca_cert_pem        = module.pki.pki_ca_crt
 }
 
 module "bootstrap" {
@@ -45,8 +49,8 @@ module "bootstrap" {
   pg_database_terraform  = var.pg_database_terraform
   gateway_ip             = var.gateway_ip
   vm_template_id         = var.vm_template_id
-  ca_private_key_pem     = tls_private_key.ca.private_key_pem
-  ca_cert_pem            = tls_self_signed_cert.ca.cert_pem
+  ca_private_key_pem     = module.pki.pki_ca_key
+  ca_cert_pem            = module.pki.pki_ca_crt
 }
 
 module "kubernetes" {
@@ -71,6 +75,6 @@ module "kubernetes" {
   hubble_ip              = var.hubble_ip
   dashboard_ip           = var.dashboard_ip
   k8s_app_ip_range       = var.k8s_app_ip_range
-  ca_private_key_pem     = tls_private_key.ca.private_key_pem
-  ca_cert_pem            = tls_self_signed_cert.ca.cert_pem
+  ca_private_key_pem     = module.pki.pki_ca_key
+  ca_cert_pem            = module.pki.pki_ca_crt
 }

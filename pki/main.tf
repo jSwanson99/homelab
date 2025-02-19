@@ -20,3 +20,12 @@ resource "tls_self_signed_cert" "ca" {
     "crl_signing",
   ]
 }
+
+# One-time setup (do before applying):
+#   sudo ln -sf $(pwd)/ca-cert.crt /etc/pki/ca-trust/source/anchors/terraform-ca.crt
+#   sudo update-ca-trust
+resource "local_file" "ca_cert" {
+  content  = resource.tls_self_signed_cert.ca.cert_pem
+  filename = "${path.module}/ca.crt"
+}
+
