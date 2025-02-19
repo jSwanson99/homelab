@@ -4,6 +4,14 @@ mkdir -p /var/log/nginx
 touch /var/log/nginx/error.log
 touch /var/log/nginx/access.log
 
+chown -R nginx:nginx /etc/pki/nginx
+chown -R nginx:nginx /etc/nginx
+chown -R nginx:nginx /var/log/nginx
+chmod ug+rw /etc/pki/nginx
+chmod ug+rw /etc/nginx
+chmod ug+rwx /var/log/nginx
+chmod ug+rwx /etc/pki/nginx/certs
+
 # Permissions
 chmod ug+x /etc/pki/nginx/sign.sh
 chown -R nginx:nginx /var/log/nginx
