@@ -50,7 +50,7 @@ variable "kubernetes_node_two_ip" {
 
 variable "k8s_app_ip_range" {
   type    = string
-  default = "192.168.1.240-192.168.1.255"
+  default = "192.168.1.240-192.168.1.254"
 }
 variable "argocd_ip" {
   type    = string
