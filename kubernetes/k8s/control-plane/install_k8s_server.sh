@@ -25,9 +25,7 @@ sudo kubeadm init \
 	--apiserver-advertise-address="$kubernetes_server_ip"
 
 export KUBECONFIG=/etc/kubernetes/admin.conf
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+echo "export KUBECONFIG=/etc/kubernetes/admin.conf" >> /root/.bashrc
 
 cat <<EOF > /etc/modules-load.d/cilium.conf
 xt_socket
