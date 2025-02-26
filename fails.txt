@@ -1,0 +1,70 @@
+📋 Test Report [cilium-test-1]
+❌ 21/74 tests failed (80/666 actions), 36 tests skipped, 0 scenarios skipped:
+Test [no-unexpected-packet-drops]:
+  ❌ no-unexpected-packet-drops/no-unexpected-packet-drops/kubernetes/worker-two
+  ❌ no-unexpected-packet-drops/no-unexpected-packet-drops/kubernetes/worker-one
+  ❌ no-unexpected-packet-drops/no-unexpected-packet-drops/kubernetes/kubernetes-server
+Test [no-policies]:
+  ❌ no-policies/pod-to-hostport/curl-1: cilium-test-1/client3-795488bf5-87r9h (10.0.1.41) -> cilium-test-1/echo-same-node-6c545975c6-jt9kp (192.168.1.32:4000)
+  ❌ no-policies/pod-to-hostport/curl-2: cilium-test-1/client-645b68dcf7-zzsgw (10.0.2.240) -> cilium-test-1/echo-other-node-7f546db4f4-whsqj (192.168.1.31:4000)
+  ❌ no-policies/pod-to-hostport/curl-4: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> cilium-test-1/echo-other-node-7f546db4f4-whsqj (192.168.1.31:4000)
+Test [echo-ingress-l7]:
+  ❌ echo-ingress-l7/pod-to-pod-with-endpoints/curl-ipv4-2-public: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-2-public (10.0.1.110:8080)
+  ❌ echo-ingress-l7/pod-to-pod-with-endpoints/curl-ipv4-2-private: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-2-private (10.0.1.110:8080)
+  ❌ echo-ingress-l7/pod-to-pod-with-endpoints/curl-ipv4-2-privatewith-header: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-2-privatewith-header (10.0.1.110:8080)
+  ❌ echo-ingress-l7/pod-to-pod-with-endpoints/curl-ipv4-3-public: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-3-public (10.0.2.17:8080)
+  ❌ echo-ingress-l7/pod-to-pod-with-endpoints/curl-ipv4-3-private: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-3-private (10.0.2.17:8080)
+  ❌ echo-ingress-l7/pod-to-pod-with-endpoints/curl-ipv4-3-privatewith-header: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-3-privatewith-header (10.0.2.17:8080)
+Test [echo-ingress-l7-named-port]:
+  ❌ echo-ingress-l7-named-port/pod-to-pod-with-endpoints/curl-ipv4-2-public: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-2-public (10.0.1.110:8080)
+  ❌ echo-ingress-l7-named-port/pod-to-pod-with-endpoints/curl-ipv4-2-private: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-2-private (10.0.1.110:8080)
+  ❌ echo-ingress-l7-named-port/pod-to-pod-with-endpoints/curl-ipv4-2-privatewith-header: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-2-privatewith-header (10.0.1.110:8080)
+  ❌ echo-ingress-l7-named-port/pod-to-pod-with-endpoints/curl-ipv4-3-public: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-3-public (10.0.2.17:8080)
+  ❌ echo-ingress-l7-named-port/pod-to-pod-with-endpoints/curl-ipv4-3-private: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-3-private (10.0.2.17:8080)
+  ❌ echo-ingress-l7-named-port/pod-to-pod-with-endpoints/curl-ipv4-3-privatewith-header: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-3-privatewith-header (10.0.2.17:8080)
+Test [client-egress-l7-method]:
+  ❌ client-egress-l7-method/pod-to-pod-with-endpoints/curl-ipv4-0-public: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-0-public (10.0.2.17:8080)
+  ❌ client-egress-l7-method/pod-to-pod-with-endpoints/curl-ipv4-0-private: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-0-private (10.0.2.17:8080)
+  ❌ client-egress-l7-method/pod-to-pod-with-endpoints/curl-ipv4-0-privatewith-header: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-0-privatewith-header (10.0.2.17:8080)
+  ❌ client-egress-l7-method/pod-to-pod-with-endpoints/curl-ipv4-1-public: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-public (10.0.1.110:8080)
+  ❌ client-egress-l7-method/pod-to-pod-with-endpoints/curl-ipv4-1-private: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-private (10.0.1.110:8080)
+  ❌ client-egress-l7-method/pod-to-pod-with-endpoints/curl-ipv4-1-privatewith-header: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-privatewith-header (10.0.1.110:8080)
+Test [client-egress-l7-method-port-range]:
+  ❌ client-egress-l7-method-port-range/pod-to-pod-with-endpoints/curl-ipv4-0-public: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-0-public (10.0.2.17:8080)
+  ❌ client-egress-l7-method-port-range/pod-to-pod-with-endpoints/curl-ipv4-0-private: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-0-private (10.0.2.17:8080)
+  ❌ client-egress-l7-method-port-range/pod-to-pod-with-endpoints/curl-ipv4-0-privatewith-header: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-0-privatewith-header (10.0.2.17:8080)
+  ❌ client-egress-l7-method-port-range/pod-to-pod-with-endpoints/curl-ipv4-1-public: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-public (10.0.1.110:8080)
+  ❌ client-egress-l7-method-port-range/pod-to-pod-with-endpoints/curl-ipv4-1-private: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-private (10.0.1.110:8080)
+  ❌ client-egress-l7-method-port-range/pod-to-pod-with-endpoints/curl-ipv4-1-privatewith-header: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-privatewith-header (10.0.1.110:8080)
+Test [client-egress-l7]:
+  ❌ client-egress-l7/pod-to-pod/curl-ipv4-2: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> cilium-test-1/echo-other-node-7f546db4f4-whsqj (10.0.1.110:8080)
+  ❌ client-egress-l7/pod-to-pod/curl-ipv4-3: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> cilium-test-1/echo-same-node-6c545975c6-jt9kp (10.0.2.17:8080)
+  ❌ client-egress-l7/pod-to-world/http-to-one.one.one.one.-1: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> one.one.one.one.-http (one.one.one.one.:80)
+Test [client-egress-l7-port-range]:
+  ❌ client-egress-l7-port-range/pod-to-pod/curl-ipv4-2: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> cilium-test-1/echo-other-node-7f546db4f4-whsqj (10.0.1.110:8080)
+  ❌ client-egress-l7-port-range/pod-to-pod/curl-ipv4-3: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> cilium-test-1/echo-same-node-6c545975c6-jt9kp (10.0.2.17:8080)
+  ❌ client-egress-l7-port-range/pod-to-world/http-to-one.one.one.one.-0: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> one.one.one.one.-http (one.one.one.one.:80)
+Test [client-egress-l7-named-port]:
+  ❌ client-egress-l7-named-port/pod-to-pod/curl-ipv4-0: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> cilium-test-1/echo-other-node-7f546db4f4-whsqj (10.0.1.110:8080)
+  ❌ client-egress-l7-named-port/pod-to-pod/curl-ipv4-1: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> cilium-test-1/echo-same-node-6c545975c6-jt9kp (10.0.2.17:8080)
+  ❌ client-egress-l7-named-port/pod-to-world/http-to-one.one.one.one.-1: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> one.one.one.one.-http (one.one.one.one.:80)
+Test [client-egress-tls-sni]:
+  ❌ client-egress-tls-sni/pod-to-world/https-to-one.one.one.one.-0: cilium-test-1/client-645b68dcf7-zzsgw (10.0.2.240) -> one.one.one.one.-https (one.one.one.one.:443)
+  ❌ client-egress-tls-sni/pod-to-world/https-to-one.one.one.one.-index-0: cilium-test-1/client-645b68dcf7-zzsgw (10.0.2.240) -> one.one.one.one.-https-index (one.one.one.one.:443)
+  ❌ client-egress-tls-sni/pod-to-world/https-to-one.one.one.one.-1: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> one.one.one.one.-https (one.one.one.one.:443)
+  ❌ client-egress-tls-sni/pod-to-world/https-to-one.one.one.one.-index-1: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> one.one.one.one.-https-index (one.one.one.one.:443)
+  ❌ client-egress-tls-sni/pod-to-world/https-to-one.one.one.one.-2: cilium-test-1/client3-795488bf5-87r9h (10.0.1.41) -> one.one.one.one.-https (one.one.one.one.:443)
+  ❌ client-egress-tls-sni/pod-to-world/https-to-one.one.one.one.-index-2: cilium-test-1/client3-795488bf5-87r9h (10.0.1.41) -> one.one.one.one.-https-index (one.one.one.one.:443)
+Test [client-egress-tls-sni-denied]:
+  ❌ client-egress-tls-sni-denied/pod-to-world-2/https-cilium.io.-0: cilium-test-1/client-645b68dcf7-zzsgw (10.0.2.240) -> cilium.io.-https (cilium.io.:443)
+  ❌ client-egress-tls-sni-denied/pod-to-world-2/https-cilium.io.-1: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> cilium.io.-https (cilium.io.:443)
+  ❌ client-egress-tls-sni-denied/pod-to-world-2/https-cilium.io.-2: cilium-test-1/client3-795488bf5-87r9h (10.0.1.41) -> cilium.io.-https (cilium.io.:443)
+Test [client-egress-l7-tls-headers-sni]:
+  ❌ client-egress-l7-tls-headers-sni/pod-to-world-with-tls-intercept/https-to-one.one.one.one.-0: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> one.one.one.one.-https (one.one.one.one.:443)
+  ❌ client-egress-l7-tls-headers-sni/pod-to-world-with-tls-intercept/https-to-one.one.one.one.-1: cilium-test-1/client3-795488bf5-87r9h (10.0.1.41) -> one.one.one.one.-https (one.one.one.one.:443)
+  ❌ client-egress-l7-tls-headers-sni/pod-to-world-with-tls-intercept/https-to-one.one.one.one.-2: cilium-test-1/client-645b68dcf7-zzsgw (10.0.2.240) -> one.one.one.one.-https (one.one.one.one.:443)
+Test [client-egress-l7-set-header]:
+  ❌ client-egress-l7-set-header/pod-to-pod-with-endpoints/curl-ipv4-1-auth-header-required: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-auth-header-required (10.0.2.17:8080)
+  ❌ client-egress-l7-set-header/pod-to-pod-with-endpoints/curl-ipv4-1-auth-header-required: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-auth-header-required (10.0.1.110:8080)
+Test [client-egress-l7-set-header-port-range]:
+  ❌ client-egress-l7-set-header-port-range/pod-to-pod-with-endpoints/curl-ipv4-1-auth-header-required: cilium-test-1/client2-66475877c6-mf7tp (10.0.2.92) -> curl-ipv4-1-auth-header-required (10.0.1.110:8080)

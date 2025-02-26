@@ -38,9 +38,8 @@ EOF
     }
   }
   network {
-    firewall = true
-    bridge   = "vmbr0"
-    model    = "virtio"
+    bridge = "vmbr0"
+    model  = "virtio"
   }
   connection {
     type        = "ssh"

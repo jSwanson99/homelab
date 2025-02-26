@@ -54,7 +54,7 @@ module "bootstrap" {
 }
 
 module "kubernetes" {
-  source                 = "./kubernetes/k8s"
+  source                 = "./kubernetes"
   gateway_ip             = var.gateway_ip
   vm_template_id         = var.vm_template_id
   user                   = var.user
