@@ -11,7 +11,6 @@ firewall-cmd --permanent --add-port=10251/tcp  # kube-scheduler
 firewall-cmd --permanent --add-port=10257/tcp  # kube-controller-manager
 firewall-cmd --permanent --add-port=12000/tcp  # hubble
 firewall-cmd --permanent --add-port=9962-9964/tcp  # Cilium metrics
-firewall-cmd --permanent --add-port=4244/tcp  # Hubble UI
 firewall-cmd --permanent --add-port=80/tcp # Ingress traffic
 firewall-cmd --permanent --add-port=443/tcp
 firewall-cmd --reload
@@ -61,8 +60,15 @@ cilium install --version 1.17.1 \
 	--set kubeProxyReplacement=true \
 	--set l7Proxy=true \
 	--set ingressController.enabled=true \
+	--set ingressController.default=true \
 	--set ingressController.loadbalancerMode=dedicated \
-	--set loadBalancer.l7.backend=envoy
+	--set loadBalancer.l7.backend=envoy \
+	--set hostPort.enabled=true \
+	--set bpf.masquerade=true \
+  --set bpf.vlanBypass={0} \
+  --set enableIPv4Masquerade=true \
+  --set enableIdentityMark=true \
+  --set ipam.mode=cluster-pool
 
 echo "Enable hubble"
 cilium hubble enable --ui

@@ -72,4 +72,5 @@ firewall-cmd --permanent --add-port=4240/tcp  # Cilium Health Check
 firewall-cmd --permanent --add-port=7946/tcp
 firewall-cmd --permanent --add-port=7946/udp
 firewall-cmd --permanent --add-port=8080/udp
+firewall-cmd --permanent --add-port=4000/tcp
 firewall-cmd --reload
