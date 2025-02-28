@@ -52,6 +52,10 @@ variable "k8s_app_ip_range" {
   type    = string
   default = "192.168.1.240-192.168.1.254"
 }
+variable "grafana_ip" {
+  type    = string
+  default = "192.168.1.252/24"
+}
 variable "argocd_ip" {
   type    = string
   default = "192.168.1.253/24"

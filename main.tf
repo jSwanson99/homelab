@@ -20,6 +20,7 @@ module "routing" {
   forward_proxy_ip = var.forward_proxy_ip
   corefile = templatefile("Corefile.tftpl", {
     gateway_ip             = split("/", var.gateway_ip)[0]
+    grafana_ip             = split("/", var.grafana_ip)[0]
     argocd_ip              = split("/", var.argocd_ip)[0]
     coredns_ip             = split("/", var.coredns_ip)[0]
     dashboard_ip           = split("/", var.dashboard_ip)[0]
