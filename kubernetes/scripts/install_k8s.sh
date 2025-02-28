@@ -66,6 +66,7 @@ firewall-cmd --permanent --add-port=80/udp
 firewall-cmd --permanent --add-port=443/udp
 firewall-cmd --permanent --add-port=4789/udp # VXLAN
 firewall-cmd --permanent --add-port=4244/tcp
+firewall-cmd --permanent --add-port=4245/tcp # hubble relay
 firewall-cmd --permanent --add-port=8472/udp
 firewall-cmd --permanent --add-port=10250/tcp  # Kubelet API
 firewall-cmd --permanent --add-port=4240/tcp  # Cilium Health Check

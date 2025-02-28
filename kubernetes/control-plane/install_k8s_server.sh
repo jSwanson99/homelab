@@ -68,7 +68,9 @@ cilium install --version 1.17.1 \
   --set bpf.vlanBypass={0} \
   --set enableIPv4Masquerade=true \
   --set enableIdentityMark=true \
-  --set ipam.mode=cluster-pool
+  --set ipam.mode=cluster-pool \
+	--set k8sServiceHost=$kubernetes_server_ip \
+	--set k8sServicePort=6443
 
 echo "Enable hubble"
 cilium hubble enable --ui
