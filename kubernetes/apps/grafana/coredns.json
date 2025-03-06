@@ -90,7 +90,7 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
+        "w": 8,
         "x": 0,
         "y": 0
       },
@@ -129,7 +129,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    quantile(0.9)(duration_secs) as p90,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND rcode IN (${rcode})\nGROUP BY minute\nORDER BY minute DESC",
+          "rawSql": "SELECT\n    quantile(0.9)(duration_secs) as p90,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet}) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC",
           "refId": "A"
         }
       ],
@@ -214,8 +214,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 7,
-        "x": 6,
+        "w": 8,
+        "x": 8,
         "y": 0
       },
       "id": 11,
@@ -253,7 +253,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    count() as queries,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY minute\nORDER BY minute DESC",
+          "rawSql": "SELECT\n    count() as queries,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC",
           "refId": "A"
         }
       ],
@@ -340,8 +340,8 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 6,
-        "x": 13,
+        "w": 8,
+        "x": 16,
         "y": 0
       },
       "id": 12,
@@ -379,7 +379,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(rcode != 'NOERROR') / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY minute\nORDER BY minute",
+          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(rcode != 'NOERROR') / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute",
           "refId": "A"
         }
       ],
@@ -466,10 +466,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
-        "w": 5,
-        "x": 19,
-        "y": 0
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 7
       },
       "id": 16,
       "options": {
@@ -506,11 +506,376 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY minute\nORDER BY minute",
+          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute",
           "refId": "A"
         }
       ],
       "title": "DSNSEC Failures",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "count (.*)",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "uid": "grafana-clickhouse-datasource"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.85,
+            "drawStyle": "bars",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 8,
+        "y": 7
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true,
+          "width": 200
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorType": "sql",
+          "format": 0,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.8.2",
+          "queryType": "timeseries",
+          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    IPv4CIDRToRange(client_ip, 24).1 as subnet\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY subnet, minute\nORDER BY minute, count DESC",
+          "refId": "A"
+        }
+      ],
+      "title": "Count by Subnet",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "count (.*)",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "uid": "grafana-clickhouse-datasource"
+      },
+      "description": "count(DNSSEC_OK) / count()",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 1,
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 1,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 13
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorType": "sql",
+          "format": 0,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.8.2",
+          "queryType": "timeseries",
+          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute",
+          "refId": "A"
+        }
+      ],
+      "title": "DSNSEC Failures",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "count (.*)",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "uid": "grafana-clickhouse-datasource"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.85,
+            "drawStyle": "bars",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 16,
+        "x": 8,
+        "y": 13
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true,
+          "width": 200
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.1",
+      "targets": [
+        {
+          "editorType": "sql",
+          "format": 0,
+          "meta": {
+            "builderOptions": {
+              "columns": [],
+              "database": "",
+              "limit": 1000,
+              "mode": "list",
+              "queryType": "table",
+              "table": ""
+            }
+          },
+          "pluginVersion": "4.8.2",
+          "queryType": "timeseries",
+          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    type\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY type, minute\nORDER BY minute, count DESC",
+          "refId": "A"
+        }
+      ],
+      "title": "Count by Type",
       "transformations": [
         {
           "id": "renameByRegex",
@@ -554,7 +919,7 @@
         "h": 11,
         "w": 5,
         "x": 0,
-        "y": 7
+        "y": 19
       },
       "id": 1,
       "options": {
@@ -598,7 +963,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "table",
-          "rawSql": "SELECT\n    type,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY type\nORDER BY count DESC",
+          "rawSql": "SELECT\n    type,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY type\nORDER BY count DESC",
           "refId": "A"
         }
       ],
@@ -637,7 +1002,7 @@
         "h": 11,
         "w": 5,
         "x": 5,
-        "y": 7
+        "y": 19
       },
       "id": 3,
       "options": {
@@ -681,7 +1046,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "table",
-          "rawSql": "SELECT\n    client_ip,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY client_ip\nORDER BY count DESC",
+          "rawSql": "SELECT\n    client_ip,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY client_ip\nORDER BY count DESC",
           "refId": "A"
         }
       ],
@@ -714,7 +1079,7 @@
         "h": 11,
         "w": 5,
         "x": 10,
-        "y": 7
+        "y": 19
       },
       "id": 4,
       "options": {
@@ -758,7 +1123,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "table",
-          "rawSql": "SELECT\n    rcode,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY rcode\nORDER BY count DESC",
+          "rawSql": "SELECT\n    rcode,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY rcode\nORDER BY count DESC",
           "refId": "A"
         }
       ],
@@ -791,7 +1156,7 @@
         "h": 11,
         "w": 5,
         "x": 15,
-        "y": 7
+        "y": 19
       },
       "id": 13,
       "options": {
@@ -835,11 +1200,11 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "table",
-          "rawSql": "SELECT\n    rcode,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY rcode\nORDER BY count DESC",
+          "rawSql": "SELECT\n    count() AS count,\n    IPv4CIDRToRange(client_ip, 24).1 as subnet\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY  subnet\nORDER BY count DESC",
           "refId": "A"
         }
       ],
-      "title": "Count by Rcode",
+      "title": "Count by Subnet",
       "transparent": true,
       "type": "piechart"
     },
@@ -868,7 +1233,7 @@
         "h": 11,
         "w": 4,
         "x": 20,
-        "y": 7
+        "y": 19
       },
       "id": 7,
       "options": {
@@ -912,7 +1277,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "table",
-          "rawSql": "SELECT\n    dnssec_ok,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY dnssec_ok\nORDER BY count DESC",
+          "rawSql": "SELECT\n    dnssec_ok,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY dnssec_ok\nORDER BY count DESC",
           "refId": "A"
         }
       ],
@@ -941,243 +1306,6 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 18,
-        "w": 16,
-        "x": 0,
-        "y": 18
-      },
-      "id": 15,
-      "options": {
-        "calculate": false,
-        "cellGap": 1,
-        "color": {
-          "exponent": 0.5,
-          "fill": "dark-orange",
-          "mode": "scheme",
-          "reverse": false,
-          "scale": "exponential",
-          "scheme": "Purples",
-          "steps": 64
-        },
-        "exemplars": {
-          "color": "rgba(255,0,255,0.7)"
-        },
-        "filterValues": {
-          "le": 1e-9
-        },
-        "legend": {
-          "show": true
-        },
-        "rowsFrame": {
-          "layout": "auto"
-        },
-        "tooltip": {
-          "mode": "single",
-          "showColorScale": false,
-          "yHistogram": false
-        },
-        "yAxis": {
-          "axisPlacement": "left",
-          "reverse": false
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "table",
-          "rawSql": "-- Group by minute first, then show top names for each time period\nSELECT\n    toStartOfMinute(Time) AS minute,\n    name,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND rcode != 'NOERROR'\nGROUP BY minute, name\nORDER BY minute ASC, count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Type",
-      "transformations": [
-        {
-          "id": "groupingToMatrix",
-          "options": {
-            "columnField": "name",
-            "rowField": "minute",
-            "valueField": "count"
-          }
-        },
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "minute\\name"
-              }
-            ],
-            "fields": {}
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "minute\\name": "Time"
-            }
-          }
-        }
-      ],
-      "type": "heatmap"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "scaleDistribution": {
-              "type": "linear"
-            }
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 18,
-        "w": 8,
-        "x": 16,
-        "y": 18
-      },
-      "id": 14,
-      "options": {
-        "calculate": false,
-        "cellGap": 1,
-        "color": {
-          "exponent": 0.5,
-          "fill": "dark-orange",
-          "mode": "scheme",
-          "reverse": false,
-          "scale": "exponential",
-          "scheme": "Blues",
-          "steps": 64
-        },
-        "exemplars": {
-          "color": "rgba(255,0,255,0.7)"
-        },
-        "filterValues": {
-          "le": 1e-9
-        },
-        "legend": {
-          "show": true
-        },
-        "rowsFrame": {
-          "layout": "auto"
-        },
-        "tooltip": {
-          "mode": "single",
-          "showColorScale": false,
-          "yHistogram": false
-        },
-        "yAxis": {
-          "axisPlacement": "left",
-          "reverse": false
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "table",
-          "rawSql": "-- Group by minute first, then show top names for each time period\nSELECT\n    toStartOfMinute(Time) AS minute,\n    client_ip,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND rcode != 'NOERROR'\nGROUP BY minute, client_ip\nORDER BY minute ASC, count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Type",
-      "transformations": [
-        {
-          "id": "groupingToMatrix",
-          "options": {
-            "columnField": "client_ip",
-            "rowField": "minute",
-            "valueField": "count"
-          }
-        },
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "minute\\client_ip"
-              }
-            ],
-            "fields": {}
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {},
-            "renameByName": {
-              "minute\\client_ip": "Time",
-              "minute\\name": "Time"
-            }
-          }
-        }
-      ],
-      "type": "heatmap"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
           "color": {
             "mode": "palette-classic"
           },
@@ -1189,7 +1317,7 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
-            "drawStyle": "line",
+            "drawStyle": "bars",
             "fillOpacity": 18,
             "gradientMode": "none",
             "hideFrom": {
@@ -1235,7 +1363,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 30
       },
       "id": 10,
       "options": {
@@ -1245,7 +1373,9 @@
           ],
           "displayMode": "table",
           "placement": "right",
-          "showLegend": true
+          "showLegend": true,
+          "sortBy": "Total",
+          "sortDesc": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -1270,7 +1400,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    client_ip,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY client_ip, minute\nORDER BY minute, count DESC",
+          "rawSql": "SELECT\n    client_ip,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY client_ip, minute\nORDER BY minute, count DESC",
           "refId": "A"
         }
       ],
@@ -1304,8 +1434,8 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 25,
             "gradientMode": "none",
             "hideFrom": {
               "legend": false,
@@ -1314,7 +1444,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1323,7 +1453,7 @@
             "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "none"
+              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -1350,7 +1480,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 40
       },
       "id": 8,
       "options": {
@@ -1387,7 +1517,7 @@
           },
           "pluginVersion": "4.8.2",
           "queryType": "timeseries",
-          "rawSql": "SELECT\n    name,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY name, minute\nORDER BY minute, count DESC",
+          "rawSql": "SELECT\n    name,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY name, minute\nORDER BY minute, count DESC",
           "refId": "A"
         }
       ],
@@ -1411,40 +1541,14 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 18,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
+            "inspect": false
           },
           "mappings": [],
           "thresholds": {
@@ -1461,37 +1565,287 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "string"
+            },
+            "properties": [
+              {
+                "id": "custom.filterable",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 176
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "level"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 76
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 111
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "client_port"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 95
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "query_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 91
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 83
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "class"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 53
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "proto"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 72
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "req_size"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "dnssec_ok"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 111
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bufsize"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 83
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "rcode"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 115
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "NOERROR": {
+                        "color": "green",
+                        "index": 0
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "pattern": ".*",
+                      "result": {
+                        "color": "red",
+                        "index": 1
+                      }
+                    },
+                    "type": "regex"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "rsize"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 72
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration_secs"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 116
+              },
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "displayName",
+                "value": "duration"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "priority"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 79
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hostname"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 119
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 8,
+        "h": 18,
         "w": 24,
         "x": 0,
-        "y": 54
+        "y": 48
       },
-      "id": 9,
+      "id": 19,
       "options": {
-        "legend": {
-          "calcs": [
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
             "sum"
           ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "sortBy": "Total",
-          "sortDesc": true
+          "show": false
         },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Time"
+          }
+        ]
       },
       "pluginVersion": "11.5.1",
       "targets": [
         {
           "editorType": "sql",
-          "format": 0,
+          "format": 1,
           "meta": {
             "builderOptions": {
               "columns": [],
@@ -1503,12 +1857,12 @@
             }
           },
           "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    rcode,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode})\nGROUP BY rcode, minute\nORDER BY minute, count DESC",
+          "queryType": "table",
+          "rawSql": "SELECT\n    *\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nORDER BY Time ASC",
           "refId": "A"
         }
       ],
-      "title": "Count by Name over Time",
+      "title": "Logs",
       "transformations": [
         {
           "id": "renameByRegex",
@@ -1518,7 +1872,7 @@
           }
         }
       ],
-      "type": "timeseries"
+      "type": "table"
     }
   ],
   "preload": false,
@@ -1561,11 +1915,9 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": [
-            "NOERROR"
-          ],
+          "text": "All",
           "value": [
-            "NOERROR"
+            "$__all"
           ]
         },
         "definition": "select distinct rcode from dns_logs_mv",
@@ -1596,17 +1948,54 @@
         "refresh": 2,
         "regex": "",
         "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "definition": "select distinct type from dns_logs_mv",
+        "description": "",
+        "includeAll": true,
+        "multi": true,
+        "name": "type",
+        "options": [],
+        "query": "select distinct type from dns_logs_mv",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "definition": "select distinct\nIPv4CIDRToRange(client_ip, 24).1 as subnet\nfrom dns_logs_mv",
+        "includeAll": true,
+        "multi": true,
+        "name": "subnet",
+        "options": [],
+        "query": "select distinct\nIPv4CIDRToRange(client_ip, 24).1 as subnet\nfrom dns_logs_mv",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
       }
     ]
   },
   "time": {
-    "from": "2025-03-05T01:53:38.877Z",
-    "to": "2025-03-05T02:15:01.918Z"
+    "from": "now-30m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "CoreDNS",
   "uid": "aedhvj0w19wxse",
-  "version": 15,
+  "version": 31,
   "weekStart": ""
 }

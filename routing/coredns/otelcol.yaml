@@ -1,0 +1,55 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+  prometheus:
+    config:
+      scrape_configs:
+      - job_name: 'otel-collector'
+        scrape_interval: 30s
+        static_configs:
+        - targets: ['0.0.0.0:8888']
+      - job_name: 'coredns'
+        scrape_interval: 30s
+        static_configs:
+        - targets: ['0.0.0.0:9153']
+
+  journald:
+    directory: /run/log/journal
+    units:
+      - ssh
+      - coredns
+    priority: info
+
+processors:
+  batch:
+
+exporters:
+  debug:
+  otlp:
+    endpoint: 192.168.1.251:4317
+    tls:
+      insecure: true
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+    timeout: 30s
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
+    metrics:
+      receivers: [otlp, prometheus]
+      processors: [batch]
+      exporters: [otlp]
+    logs:
+      receivers: [journald]
+      processors: [batch]
+      exporters: [otlp]

@@ -58,6 +58,10 @@ EOF
     destination = "/etc/coredns/Corefile"
   }
   provisioner "file" {
+    source      = "${path.module}/otelcol.yaml"
+    destination = "/etc/otelcol-contrib/config.yaml"
+  }
+  provisioner "file" {
     source      = "${path.module}/coredns.service"
     destination = "/etc/systemd/system/coredns.service"
   }
