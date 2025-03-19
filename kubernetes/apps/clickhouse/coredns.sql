@@ -57,5 +57,5 @@ FROM (
     JSONExtract(Body, 'SYSLOG_IDENTIFIER', 'String') as service,
     JSONExtract(Body, '_HOSTNAME', 'String') as hostname,
     JSONExtract(Body, '_PID', 'Int32') as pid
-  FROM otel.otel_logs
+  FROM otel_logs
 )
