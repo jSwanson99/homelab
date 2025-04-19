@@ -35,6 +35,19 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 echo "Waiting for initial Argo CD deployment..."
 kubectl wait --for=condition=Available deployment -l app.kubernetes.io/part-of=argocd -n argocd --timeout=300s
 
+cat <<EOF | kubectl apply -n argocd -f -
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  labels:
+    app.kubernetes.io/name: argocd-cmd-params-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  # OpenTelemetry configuration
+  otlp.address: "your-otel-collector:4317"
+  otlp.insecure: "true"
+EOF
 kubectl patch configmap argocd-cm -n argocd --type merge -p '
 data:
   repositories: |

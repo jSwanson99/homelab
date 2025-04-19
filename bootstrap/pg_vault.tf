@@ -149,22 +149,6 @@ EOF
     ]
   }
 }
-data "external" "unsealkeysisnecure" {
-  depends_on = [proxmox_vm_qemu.pg_vault]
-  program = [
-    "ssh",
-    "-o", "StrictHostKeyChecking=no",
-    "root@${split("/", var.pg_vault_ip)[0]}",
-    "cat /tmp/secret.json | jq -c '{keys: (.unseal_keys_b64 | join(\",\")), token: .root_token}'"
-  ]
-}
-output "vault_unseal_keys" {
-  value = data.external.unsealkeysisnecure.result.keys
-}
-
-output "vault_root_token" {
-  value = data.external.unsealkeysisnecure.result.token
-}
 
 
 # {{{

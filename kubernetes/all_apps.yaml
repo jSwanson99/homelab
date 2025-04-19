@@ -1,19 +1,30 @@
-# Automatically create and manage apps & their resources in my repo
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: all-apps
+  namespace: argocd
 spec:
-  source:
-    repoURL: https://github.com/jSwanson99/homelab-gitops
-    path: . 
-    directory:
-      recurse: true
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: default
-  project: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
+  generators:
+  - git:
+      repoURL: https://github.com/jSwanson99/homelab-gitops
+      revision: HEAD
+      directories:
+      - path: apps/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/jSwanson99/homelab-gitops
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{metadata.annotations.argocd\.argoproj\.io/destination-namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true

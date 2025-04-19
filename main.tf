@@ -59,7 +59,7 @@ module "kubernetes" {
   gateway_ip             = var.gateway_ip
   vm_template_id         = var.vm_template_id
   user                   = var.user
-  vault_token            = module.bootstrap.vault_root_token
+  vault_token            = "module.bootstrap.vault_root_token"
   pg_vault_ip            = var.pg_vault_ip
   pg_user_vault          = var.pg_user_vault
   pg_password_vault      = var.pg_password_vault
