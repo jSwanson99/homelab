@@ -44,8 +44,7 @@ metadata:
     app.kubernetes.io/name: argocd-cmd-params-cm
     app.kubernetes.io/part-of: argocd
 data:
-  # OpenTelemetry configuration
-  otlp.address: "your-otel-collector:4317"
+  otlp.address: "192.168.1.251:4317"
   otlp.insecure: "true"
 EOF
 kubectl patch configmap argocd-cm -n argocd --type merge -p '
