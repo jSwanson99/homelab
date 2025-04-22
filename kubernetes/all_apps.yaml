@@ -1,30 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
+kind: Application
 metadata:
-  name: all-apps
+  name: root-app
   namespace: argocd
 spec:
-  generators:
-  - git:
-      repoURL: https://github.com/jSwanson99/homelab-gitops
-      revision: HEAD
-      directories:
-      - path: apps/*
-  template:
-    metadata:
-      name: '{{path.basename}}'
-    spec:
-      project: default
-      source:
-        repoURL: https://github.com/jSwanson99/homelab-gitops
-        targetRevision: HEAD
-        path: '{{path}}'
-      destination:
-        server: https://kubernetes.default.svc
-        namespace: '{{metadata.annotations.argocd\.argoproj\.io/destination-namespace}}'
-      syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
-        syncOptions:
-        - CreateNamespace=true
+  project: default
+  source:
+    repoURL: https://github.com/jSwanson99/homelab-gitops.git
+    targetRevision: master
+    path: apps
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
