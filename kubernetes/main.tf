@@ -15,6 +15,7 @@ module "server" {
 }
 module "worker_one" {
   source             = "./worker"
+  target_node        = "pve"
   node_name          = "worker-one"
   vm_template_id     = var.vm_template_id
   kubernetes_node_ip = var.kubernetes_node_one_ip
@@ -24,9 +25,20 @@ module "worker_one" {
 }
 module "worker_two" {
   source             = "./worker"
+  target_node        = "pve"
   node_name          = "worker-two"
   vm_template_id     = var.vm_template_id
   kubernetes_node_ip = var.kubernetes_node_two_ip
+  gateway_ip         = var.gateway_ip
+  user               = var.user
+  join_cmd           = module.server.join_cmd
+}
+module "worker_three" {
+  source             = "./worker"
+  target_node        = "pve2"
+  node_name          = "worker-three"
+  vm_template_id     = var.vm_template_id
+  kubernetes_node_ip = var.kubernetes_node_three_ip
   gateway_ip         = var.gateway_ip
   user               = var.user
   join_cmd           = module.server.join_cmd

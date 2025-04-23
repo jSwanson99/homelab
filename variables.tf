@@ -47,6 +47,10 @@ variable "kubernetes_node_two_ip" {
   type    = string
   default = "192.168.1.32/24"
 }
+variable "kubernetes_node_three_ip" {
+  type    = string
+  default = "192.168.1.33/24"
+}
 
 variable "k8s_app_ip_range" {
   type    = string

@@ -1,9 +1,9 @@
 resource "proxmox_vm_qemu" "kubernetes_node" {
   name        = var.node_name
-  target_node = "pve"
+  target_node = var.target_node
   clone       = var.vm_template_id
   full_clone  = true
-  cores       = 2
+  cores       = 4
   memory      = 4096
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"

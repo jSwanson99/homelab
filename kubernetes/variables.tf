@@ -56,6 +56,9 @@ variable "kubernetes_node_one_ip" {
 variable "kubernetes_node_two_ip" {
   type = string
 }
+variable "kubernetes_node_three_ip" {
+  type = string
+}
 variable "k8s_app_ip_range" {
   type = string
 }

@@ -1,3 +1,6 @@
+variable "target_node" {
+  type = string
+}
 variable "node_name" {
   type = string
 }
