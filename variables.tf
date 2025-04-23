@@ -18,10 +18,6 @@ variable "proxmox_ip" {
   type    = string
   default = "192.168.1.10"
 }
-variable "pg_vault_ip" {
-  type    = string
-  default = "192.168.1.20/24"
-}
 variable "truenas_ip" {
   type    = string
   default = "192.168.1.21/24"
@@ -73,18 +69,3 @@ variable "dashboard_ip" {
   default = "192.168.1.252/24"
 }
 
-variable "pg_database_kubernetes" {
-  description = "Name of database for kubernetes to use"
-  type        = string
-  default     = "kubernetes"
-}
-variable "pg_database_vault" {
-  description = "Name of database for vault to use"
-  type        = string
-  default     = "vault"
-}
-variable "pg_database_terraform" {
-  description = "Name of database for terraform to use"
-  type        = string
-  default     = "terraform"
-}

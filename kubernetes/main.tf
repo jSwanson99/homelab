@@ -50,6 +50,7 @@ resource "null_resource" "bootstrap_k8s" {
     module.server,
     module.worker_one,
     module.worker_two,
+    module.worker_three,
   ]
   connection {
     type        = "ssh"
