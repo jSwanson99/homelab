@@ -1,4 +1,3 @@
-# Creates CoreDNS
 resource "proxmox_vm_qemu" "coredns" {
   name        = "coredns"
   target_node = "pve"

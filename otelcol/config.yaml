@@ -24,16 +24,30 @@ processors:
   batch:
 
 exporters:
-  debug:
+  otlp:
+    endpoint: 192.168.1.251:4317
+    tls:
+      insecure: true
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+    timeout: 30s
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [otlp]
 
     metrics:
-      receivers: [otlp, prometheus]
+      receivers: [otlp]
       processors: [batch]
-      exporters: [debug]
+      exporters: [otlp]
+
+    logs:
+      receivers: [journald]
+      processors: [batch]
+      exporters: [otlp]
