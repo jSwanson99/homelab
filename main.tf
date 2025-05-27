@@ -6,7 +6,7 @@ module "storage" {
   source         = "./storage"
   user           = var.user
   gateway_ip     = var.gateway_ip
-  vm_template_id = var.vm_template_id
+  vm_template_id = "truenas-templ"
   truenas_ip     = var.truenas_ip
 }
 
