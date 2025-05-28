@@ -7,8 +7,14 @@ variable "user" {
   sensitive = true
 }
 variable "gateway_ip" {
-  type      = string
+  type = string
 }
 variable "truenas_ip" {
-  type      = string
+  type = string
+}
+variable "truenas_user" {
+  type = string
+}
+variable "truenas_apikey" {
+  type = string
 }

@@ -8,6 +8,8 @@ module "storage" {
   gateway_ip     = var.gateway_ip
   vm_template_id = "truenas-templ"
   truenas_ip     = var.truenas_ip
+  truenas_user   = var.truenas_user
+  truenas_apikey = var.truenas_apikey
 }
 
 module "routing" {
