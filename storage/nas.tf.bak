@@ -57,10 +57,4 @@ EOF
     bridge   = "vmbr0"
     model    = "virtio"
   }
-  connection {
-    type        = "ssh"
-    user        = var.user
-    private_key = file("~/.ssh/id_ed25519")
-    host        = split("/", var.truenas_ip)[0]
-  }
 }

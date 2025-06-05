@@ -12,9 +12,3 @@ variable "gateway_ip" {
 variable "truenas_ip" {
   type = string
 }
-variable "truenas_user" {
-  type = string
-}
-variable "truenas_apikey" {
-  type = string
-}
