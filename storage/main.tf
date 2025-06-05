@@ -8,6 +8,7 @@ resource "proxmox_vm_qemu" "truenas_scale" {
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
   boot        = "order=scsi0;ide2"
+  onboot      = true
 
   // NOTE: need to set this in the UI after anyways
   ipconfig0 = "ip=${var.truenas_ip},gw=${var.gateway_ip}"
@@ -25,12 +26,6 @@ EOF
         }
       }
       scsi1 {
-        disk {
-          storage = "local-lvm"
-          size    = "250G"
-        }
-      }
-      scsi3 {
         disk {
           storage = "local-lvm"
           size    = "250G"

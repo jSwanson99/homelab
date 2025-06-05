@@ -29,7 +29,7 @@ processors:
 exporters:
   debug:
   otlp:
-    endpoint: 192.168.1.251:4317
+    endpoint: otelcol.jds.net:4317
     tls:
       insecure: true
     retry_on_failure:

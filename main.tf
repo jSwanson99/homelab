@@ -8,8 +8,6 @@ module "storage" {
   gateway_ip     = var.gateway_ip
   vm_template_id = "truenas-templ"
   truenas_ip     = var.truenas_ip
-  truenas_user   = var.truenas_user
-  truenas_apikey = var.truenas_apikey
 }
 
 module "routing" {
@@ -22,10 +20,13 @@ module "routing" {
   forward_proxy_ip = var.forward_proxy_ip
   corefile = templatefile("Corefile.tftpl", {
     gateway_ip             = split("/", var.gateway_ip)[0]
+    vault_ip               = split("/", var.vault_ip)[0]
+    minio_ip               = split("/", var.minio_ip)[0]
+    clickhouse_ip          = split("/", var.clickhouse_ip)[0]
+    otelcol_ip             = split("/", var.otelcol_ip)[0]
     grafana_ip             = split("/", var.grafana_ip)[0]
     argocd_ip              = split("/", var.argocd_ip)[0]
     coredns_ip             = split("/", var.coredns_ip)[0]
-    dashboard_ip           = split("/", var.dashboard_ip)[0]
     hubble_ip              = split("/", var.hubble_ip)[0]
     kubernetes_server_ip   = split("/", var.kubernetes_server_ip)[0]
     kubernetes_node_one_ip = split("/", var.kubernetes_node_one_ip)[0]
@@ -48,7 +49,6 @@ module "kubernetes" {
   kubernetes_node_three_ip = var.kubernetes_node_three_ip
   argocd_ip                = var.argocd_ip
   hubble_ip                = var.hubble_ip
-  dashboard_ip             = var.dashboard_ip
   k8s_app_ip_range         = var.k8s_app_ip_range
   ca_private_key_pem       = module.pki.pki_ca_key
   ca_cert_pem              = module.pki.pki_ca_crt

@@ -32,9 +32,6 @@ variable "argocd_ip" {
 variable "hubble_ip" {
   type = string
 }
-variable "dashboard_ip" {
-  type = string
-}
 variable "ca_private_key_pem" {
   type      = string
   sensitive = true

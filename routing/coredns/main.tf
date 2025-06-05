@@ -8,6 +8,7 @@ resource "proxmox_vm_qemu" "coredns" {
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
   boot        = "order=scsi0;ide2"
+  onboot      = true
 
   ipconfig0 = "ip=${var.coredns_ip},gw=${var.gateway_ip}"
   ciuser    = var.user
