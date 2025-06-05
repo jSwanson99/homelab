@@ -7,7 +7,7 @@ resource "proxmox_vm_qemu" "kubernetes_node" {
   memory      = 4096
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
-  boot        = "order=scsi0;ide2"
+  boot        = "order=scsi0"
 
   ipconfig0 = "ip=${var.kubernetes_node_ip},gw=${var.gateway_ip}"
   ciuser    = var.user
@@ -28,11 +28,6 @@ EOF
       ide0 {
         cloudinit {
           storage = "local-lvm"
-        }
-      }
-      ide2 {
-        cdrom {
-          iso = "local:iso/Rocky-9.4-x86_64-minimal.iso"
         }
       }
     }

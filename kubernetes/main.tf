@@ -35,7 +35,7 @@ module "worker_two" {
 }
 module "worker_three" {
   source             = "./worker"
-  target_node        = "pve"
+  target_node        = "pve1"
   node_name          = "worker-three"
   vm_template_id     = var.vm_template_id
   kubernetes_node_ip = var.kubernetes_node_three_ip
