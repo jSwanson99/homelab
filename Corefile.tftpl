@@ -5,7 +5,6 @@ jds.net 1.168.192.in-addr.arpa {
     192.168.1.3 switch.jds.net
     ${truenas_ip} nas.jds.net
     ${coredns_ip} dns.jds.net
-    ${nginx_ip} nginx.jds.net
     ${kubernetes_server_ip} k8s-api1.jds.net
     ${kubernetes_node_one_ip} k8s-w1.jds.net
     ${kubernetes_node_two_ip} k8s-w2.jds.net
@@ -21,6 +20,9 @@ jds.net 1.168.192.in-addr.arpa {
 }
 
 . {
+	hosts /etc/coredns/hosts {
+		fallthrough
+	}
   forward . tls://185.222.222.222 tls://45.11.45.11 {
     tls_servername dns.sb
     health_check 5s

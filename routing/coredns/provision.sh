@@ -17,6 +17,9 @@ setcap cap_net_bind_service=+ep /usr/local/bin/coredns
 useradd -r -s /bin/false coredns
 mkdir -p /etc/coredns
 
+# Ad block / hosts file
+wget https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts -O /etc/coredns/hosts
+
 # Otelcol
 VERSION=0.120.0
 wget https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v${VERSION}/otelcol-contrib_${VERSION}_linux_amd64.rpm
