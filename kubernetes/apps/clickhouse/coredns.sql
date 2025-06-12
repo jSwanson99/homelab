@@ -32,7 +32,7 @@ AS
 SELECT
   toDateTime64(Timestamp, 3, 'America/New_York') as Time,
   toLowCardinality(message[1]) as level,
-  toIPv4(message[2]) as client_ip,
+  toIPv4OrNull(message[2]) as client_ip,
   toUInt16(message[3]) as client_port,
   toUInt32(message[4]) as query_id,
   toLowCardinality(message[5]) as type,
@@ -54,8 +54,8 @@ FROM (
     Timestamp,
     extractAllGroups(JSONExtract(Body, 'MESSAGE', 'String'), '(\S+) (\S+):(\S+) - (\S+) \"(\S+) (\S+) (\S+) (\S+) (\S+) (\S+) (\S+)\" (\S+) (\S+) (\S+) ([0-9\.]+)')[1] as message,
     JSONExtract(Body, 'PRIORITY', 'Int16') as priority,
-    JSONExtract(Body, 'SYSLOG_IDENTIFIER', 'String') as service,
     JSONExtract(Body, '_HOSTNAME', 'String') as hostname,
     JSONExtract(Body, '_PID', 'Int32') as pid
   FROM otel_logs
+	WHERE ServiceName = 'coredns'
 )

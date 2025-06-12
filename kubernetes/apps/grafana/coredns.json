@@ -1,8 +1,9 @@
 {
-  "annotations": {
-    "list": [
-      {
-        "builtIn": 1,
+  "annotations": [
+    {
+      "kind": "AnnotationQuery",
+      "spec": {
+        "builtIn": true,
         "datasource": {
           "type": "grafana",
           "uid": "-- Grafana --"
@@ -10,1910 +11,2408 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
-        "name": "Annotations & Alerts",
-        "type": "dashboard"
+        "name": "Annotations & Alerts"
       }
-    ]
-  },
-  "editable": true,
-  "fiscalYearStartMonth": 0,
-  "graphTooltip": 0,
-  "id": 1,
-  "links": [],
-  "panels": [
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-BlPu"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 1,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 0,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    quantile(0.9)(duration_secs) as p90,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet}) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "p90 Latency",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-BlPu"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 1,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 0
-      },
-      "id": 11,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    count() as queries,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "count(NOERROR) / count()",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-BlPu"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 1,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 0
-      },
-      "id": 12,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(rcode != 'NOERROR') / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute",
-          "refId": "A"
-        }
-      ],
-      "title": "Error Rate",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "count(DNSSEC_OK) / count()",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-BlPu"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMax": 1,
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 1,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 0,
-        "y": 7
-      },
-      "id": 16,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute",
-          "refId": "A"
-        }
-      ],
-      "title": "DSNSEC Failures",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.85,
-            "drawStyle": "bars",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 16,
-        "x": 8,
-        "y": 7
-      },
-      "id": 9,
-      "options": {
-        "legend": {
-          "calcs": [
-            "sum"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "sortBy": "Total",
-          "sortDesc": true,
-          "width": 200
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    IPv4CIDRToRange(client_ip, 24).1 as subnet\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY subnet, minute\nORDER BY minute, count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Subnet",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "count(DNSSEC_OK) / count()",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-BlPu"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "axisSoftMax": 1,
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 1,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "max": 1,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 0,
-        "y": 13
-      },
-      "id": 18,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute",
-          "refId": "A"
-        }
-      ],
-      "title": "DSNSEC Failures",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.85,
-            "drawStyle": "bars",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 16,
-        "x": 8,
-        "y": 13
-      },
-      "id": 17,
-      "options": {
-        "legend": {
-          "calcs": [
-            "sum"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "sortBy": "Total",
-          "sortDesc": true,
-          "width": 200
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    type\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY type, minute\nORDER BY minute, count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Type",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 5,
-        "x": 0,
-        "y": 19
-      },
-      "id": 1,
-      "options": {
-        "displayMode": "gradient",
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "table",
-          "rawSql": "SELECT\n    type,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY type\nORDER BY count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Type",
-      "transparent": true,
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 5,
-        "x": 5,
-        "y": 19
-      },
-      "id": 3,
-      "options": {
-        "displayMode": "gradient",
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "maxVizHeight": 300,
-        "minVizHeight": 16,
-        "minVizWidth": 8,
-        "namePlacement": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
-        },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "table",
-          "rawSql": "SELECT\n    client_ip,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY client_ip\nORDER BY count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Client IP",
-      "transparent": true,
-      "type": "bargauge"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 5,
-        "x": 10,
-        "y": 19
-      },
-      "id": 4,
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true,
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "table",
-          "rawSql": "SELECT\n    rcode,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY rcode\nORDER BY count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Rcode",
-      "transparent": true,
-      "type": "piechart"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 5,
-        "x": 15,
-        "y": 19
-      },
-      "id": 13,
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true,
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "table",
-          "rawSql": "SELECT\n    count() AS count,\n    IPv4CIDRToRange(client_ip, 24).1 as subnet\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY  subnet\nORDER BY count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Subnet",
-      "transparent": true,
-      "type": "piechart"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            }
-          },
-          "mappings": []
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 11,
-        "w": 4,
-        "x": 20,
-        "y": 19
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true,
-          "values": [
-            "value",
-            "percent"
-          ]
-        },
-        "pieType": "donut",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "table",
-          "rawSql": "SELECT\n    dnssec_ok,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY dnssec_ok\nORDER BY count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Used DNSSEC",
-      "transformations": [
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "minute\\client_ip"
-              }
-            ],
-            "fields": {}
-          }
-        }
-      ],
-      "transparent": true,
-      "type": "piechart"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 18,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 30
-      },
-      "id": 10,
-      "options": {
-        "legend": {
-          "calcs": [
-            "sum"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "sortBy": "Total",
-          "sortDesc": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    client_ip,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY client_ip, minute\nORDER BY minute, count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Client IP Over Time",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 40
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [
-            "sum"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true,
-          "sortBy": "Total",
-          "sortDesc": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 0,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "timeseries",
-          "rawSql": "SELECT\n    name,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nGROUP BY name, minute\nORDER BY minute, count DESC",
-          "refId": "A"
-        }
-      ],
-      "title": "Count by Name over Time",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "uid": "grafana-clickhouse-datasource"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byType",
-              "options": "string"
-            },
-            "properties": [
-              {
-                "id": "custom.filterable",
-                "value": true
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Time"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 176
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "level"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 76
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "client_ip"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 111
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "client_port"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 95
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "query_id"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 91
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "type"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 83
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "class"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 53
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "proto"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 72
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "req_size"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 100
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "dnssec_ok"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 111
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-background"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "bufsize"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 83
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "rcode"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 115
-              },
-              {
-                "id": "custom.cellOptions",
-                "value": {
-                  "type": "color-background"
-                }
-              },
-              {
-                "id": "mappings",
-                "value": [
-                  {
-                    "options": {
-                      "NOERROR": {
-                        "color": "green",
-                        "index": 0
-                      }
-                    },
-                    "type": "value"
-                  },
-                  {
-                    "options": {
-                      "pattern": ".*",
-                      "result": {
-                        "color": "red",
-                        "index": 1
-                      }
-                    },
-                    "type": "regex"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "rsize"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 72
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "duration_secs"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 116
-              },
-              {
-                "id": "unit",
-                "value": "s"
-              },
-              {
-                "id": "displayName",
-                "value": "duration"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "priority"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 79
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "hostname"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 119
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 18,
-        "w": 24,
-        "x": 0,
-        "y": 48
-      },
-      "id": 19,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Time"
-          }
-        ]
-      },
-      "pluginVersion": "11.5.1",
-      "targets": [
-        {
-          "editorType": "sql",
-          "format": 1,
-          "meta": {
-            "builderOptions": {
-              "columns": [],
-              "database": "",
-              "limit": 1000,
-              "mode": "list",
-              "queryType": "table",
-              "table": ""
-            }
-          },
-          "pluginVersion": "4.8.2",
-          "queryType": "table",
-          "rawSql": "SELECT\n    *\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(client_ip, 24).1 IN (${subnet})\nORDER BY Time ASC",
-          "refId": "A"
-        }
-      ],
-      "title": "Logs",
-      "transformations": [
-        {
-          "id": "renameByRegex",
-          "options": {
-            "regex": "count (.*)",
-            "renamePattern": "$1"
-          }
-        }
-      ],
-      "type": "table"
     }
   ],
+  "cursorSync": "Off",
+  "editable": true,
+  "elements": {
+    "panel-1": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 1,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "table",
+                      "rawSql": "SELECT\n    type,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY type\nORDER BY count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 1,
+        "links": [],
+        "title": "Count by Type",
+        "vizConfig": {
+          "kind": "bargauge",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-10": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    client_ip,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY client_ip, minute\nORDER BY minute, count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 10,
+        "links": [],
+        "title": "Count by Client IP Over Time",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "bars",
+                  "fillOpacity": 18,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "normal"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "sum"
+                ],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "sortBy": "Total",
+                "sortDesc": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-11": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    count() as queries,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 11,
+        "links": [],
+        "title": "Count",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisGridShow": true,
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 1,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max",
+                  "min"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-12": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(rcode != 'NOERROR') / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "count(NOERROR) / count()",
+        "id": 12,
+        "links": [],
+        "title": "Error Rate",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisGridShow": true,
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 1,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "max": 1,
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "percentunit"
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max",
+                  "min"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-13": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 1,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.9.0",
+                      "queryType": "table",
+                      "rawSql": "SELECT\n    count() AS count,\n    IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 as subnet\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY  subnet\nORDER BY count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 13,
+        "links": [],
+        "title": "Count by Subnet",
+        "vizConfig": {
+          "kind": "piechart",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "mappings": []
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true,
+                "values": [
+                  "value",
+                  "percent"
+                ]
+              },
+              "pieType": "donut",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-16": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "count(DNSSEC_OK) / count()",
+        "id": 16,
+        "links": [],
+        "title": "DSNSEC Failures",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisGridShow": true,
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "axisSoftMax": 1,
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 1,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "max": 1,
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "percentunit"
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max",
+                  "min"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-17": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    type\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY type, minute\nORDER BY minute, count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 17,
+        "links": [],
+        "title": "Count by Type",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.85,
+                  "drawStyle": "bars",
+                  "fillOpacity": 25,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "normal"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "sum"
+                ],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "sortBy": "Total",
+                "sortDesc": true,
+                "width": 200
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-18": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "count(DNSSEC_OK) / count()",
+        "id": 18,
+        "links": [],
+        "title": "DSNSEC Failures",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisGridShow": true,
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "axisSoftMax": 1,
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 1,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "max": 1,
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "percentunit"
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max",
+                  "min"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-19": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 1,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "table",
+                      "rawSql": "SELECT\n    *\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nORDER BY Time ASC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 19,
+        "links": [],
+        "title": "Logs",
+        "vizConfig": {
+          "kind": "table",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "cellOptions": {
+                    "type": "auto"
+                  },
+                  "inspect": false
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byType",
+                    "options": "string"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.filterable",
+                      "value": true
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Time"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 176
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "level"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 76
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "client_ip"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 111
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "client_port"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 95
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "query_id"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 91
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "type"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 83
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "class"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 53
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "proto"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 72
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "req_size"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 100
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "dnssec_ok"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 111
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "type": "color-background"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "bufsize"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 83
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "rcode"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 115
+                    },
+                    {
+                      "id": "custom.cellOptions",
+                      "value": {
+                        "type": "color-background"
+                      }
+                    },
+                    {
+                      "id": "mappings",
+                      "value": [
+                        {
+                          "options": {
+                            "NOERROR": {
+                              "color": "green",
+                              "index": 0
+                            }
+                          },
+                          "type": "value"
+                        },
+                        {
+                          "options": {
+                            "pattern": ".*",
+                            "result": {
+                              "color": "red",
+                              "index": 1
+                            }
+                          },
+                          "type": "regex"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "rsize"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 72
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "duration_secs"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 116
+                    },
+                    {
+                      "id": "unit",
+                      "value": "s"
+                    },
+                    {
+                      "id": "displayName",
+                      "value": "duration"
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "priority"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 79
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "hostname"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.width",
+                      "value": 119
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "cellHeight": "sm",
+              "footer": {
+                "countRows": false,
+                "fields": "",
+                "reducer": [
+                  "sum"
+                ],
+                "show": false
+              },
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": true,
+                  "displayName": "Time"
+                }
+              ]
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-2": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.9.0",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    quantile(0.9)(duration_secs) as p90,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet}) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 2,
+        "links": [],
+        "title": "p90 Latency",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "continuous-BlPu"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisGridShow": true,
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "line",
+                  "fillOpacity": 1,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "smooth",
+                  "lineStyle": {
+                    "fill": "solid"
+                  },
+                  "lineWidth": 2,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "none"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "min": 0,
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                },
+                "unit": "s"
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "mean",
+                  "max",
+                  "min"
+                ],
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-3": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 1,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "table",
+                      "rawSql": "SELECT\n    client_ip,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY client_ip\nORDER BY count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 3,
+        "links": [],
+        "title": "Count by Client IP",
+        "vizConfig": {
+          "kind": "bargauge",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "displayMode": "gradient",
+              "legend": {
+                "calcs": [],
+                "displayMode": "list",
+                "placement": "bottom",
+                "showLegend": false
+              },
+              "maxVizHeight": 300,
+              "minVizHeight": 16,
+              "minVizWidth": 8,
+              "namePlacement": "auto",
+              "orientation": "auto",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "showUnfilled": true,
+              "sizing": "auto",
+              "valueMode": "color"
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-4": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 1,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "table",
+                      "rawSql": "SELECT\n    rcode,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY rcode\nORDER BY count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": []
+          }
+        },
+        "description": "",
+        "id": 4,
+        "links": [],
+        "title": "Count by Rcode",
+        "vizConfig": {
+          "kind": "piechart",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "mappings": []
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true,
+                "values": [
+                  "value",
+                  "percent"
+                ]
+              },
+              "pieType": "donut",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-7": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 1,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "table",
+                      "rawSql": "SELECT\n    dnssec_ok,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY dnssec_ok\nORDER BY count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "convertFieldType",
+                "spec": {
+                  "id": "convertFieldType",
+                  "options": {
+                    "conversions": [
+                      {
+                        "destinationType": "time",
+                        "targetField": "minute\\client_ip"
+                      }
+                    ],
+                    "fields": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 7,
+        "links": [],
+        "title": "Used DNSSEC",
+        "vizConfig": {
+          "kind": "piechart",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  }
+                },
+                "mappings": []
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "displayMode": "table",
+                "placement": "bottom",
+                "showLegend": true,
+                "values": [
+                  "value",
+                  "percent"
+                ]
+              },
+              "pieType": "donut",
+              "reduceOptions": {
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": "",
+                "values": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-8": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.8.2",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    name,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY name, minute\nORDER BY minute, count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 8,
+        "links": [],
+        "title": "Count by Name over Time",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.6,
+                  "drawStyle": "bars",
+                  "fillOpacity": 25,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "normal"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "sum"
+                ],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "sortBy": "Total",
+                "sortDesc": true
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    },
+    "panel-9": {
+      "kind": "Panel",
+      "spec": {
+        "data": {
+          "kind": "QueryGroup",
+          "spec": {
+            "queries": [
+              {
+                "kind": "PanelQuery",
+                "spec": {
+                  "datasource": {
+                    "uid": "grafana-clickhouse-datasource"
+                  },
+                  "hidden": false,
+                  "query": {
+                    "kind": "grafana-clickhouse-datasource",
+                    "spec": {
+                      "editorType": "sql",
+                      "format": 0,
+                      "meta": {
+                        "builderOptions": {
+                          "columns": [],
+                          "database": "",
+                          "limit": 1000,
+                          "mode": "list",
+                          "queryType": "table",
+                          "table": ""
+                        }
+                      },
+                      "pluginVersion": "4.9.0",
+                      "queryType": "timeseries",
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 as subnet\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) \n  AND name IN (${name}) \n  AND rcode IN (${rcode}) \n  AND type IN (${type}) \n  AND $__timeFilter(Time) \n  AND client_ip IS NOT NULL\n  AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY subnet, minute\nORDER BY minute, count DESC"
+                    }
+                  },
+                  "refId": "A"
+                }
+              }
+            ],
+            "queryOptions": {},
+            "transformations": [
+              {
+                "kind": "renameByRegex",
+                "spec": {
+                  "id": "renameByRegex",
+                  "options": {
+                    "regex": "count (.*)",
+                    "renamePattern": "$1"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "",
+        "id": 9,
+        "links": [],
+        "title": "Count by Subnet",
+        "vizConfig": {
+          "kind": "timeseries",
+          "spec": {
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "custom": {
+                  "axisBorderShow": false,
+                  "axisCenteredZero": false,
+                  "axisColorMode": "text",
+                  "axisLabel": "",
+                  "axisPlacement": "auto",
+                  "barAlignment": 0,
+                  "barWidthFactor": 0.85,
+                  "drawStyle": "bars",
+                  "fillOpacity": 25,
+                  "gradientMode": "none",
+                  "hideFrom": {
+                    "legend": false,
+                    "tooltip": false,
+                    "viz": false
+                  },
+                  "insertNulls": false,
+                  "lineInterpolation": "linear",
+                  "lineWidth": 1,
+                  "pointSize": 5,
+                  "scaleDistribution": {
+                    "type": "linear"
+                  },
+                  "showPoints": "never",
+                  "spanNulls": false,
+                  "stacking": {
+                    "group": "A",
+                    "mode": "normal"
+                  },
+                  "thresholdsStyle": {
+                    "mode": "off"
+                  }
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "options": {
+              "legend": {
+                "calcs": [
+                  "sum"
+                ],
+                "displayMode": "table",
+                "placement": "right",
+                "showLegend": true,
+                "sortBy": "Total",
+                "sortDesc": true,
+                "width": 200
+              },
+              "tooltip": {
+                "hideZeros": false,
+                "mode": "single",
+                "sort": "none"
+              }
+            },
+            "pluginVersion": "12.0.1"
+          }
+        }
+      }
+    }
+  },
+  "layout": {
+    "kind": "GridLayout",
+    "spec": {
+      "items": [
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-2"
+            },
+            "height": 7,
+            "width": 8,
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-11"
+            },
+            "height": 7,
+            "width": 8,
+            "x": 8,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-12"
+            },
+            "height": 7,
+            "width": 8,
+            "x": 16,
+            "y": 0
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-16"
+            },
+            "height": 6,
+            "width": 8,
+            "x": 0,
+            "y": 7
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-9"
+            },
+            "height": 6,
+            "width": 16,
+            "x": 8,
+            "y": 7
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-18"
+            },
+            "height": 6,
+            "width": 8,
+            "x": 0,
+            "y": 13
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-17"
+            },
+            "height": 6,
+            "width": 16,
+            "x": 8,
+            "y": 13
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-1"
+            },
+            "height": 11,
+            "width": 5,
+            "x": 0,
+            "y": 19
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-3"
+            },
+            "height": 11,
+            "width": 5,
+            "x": 5,
+            "y": 19
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-4"
+            },
+            "height": 11,
+            "width": 5,
+            "x": 10,
+            "y": 19
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-13"
+            },
+            "height": 11,
+            "width": 5,
+            "x": 15,
+            "y": 19
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-7"
+            },
+            "height": 11,
+            "width": 4,
+            "x": 20,
+            "y": 19
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-10"
+            },
+            "height": 10,
+            "width": 24,
+            "x": 0,
+            "y": 30
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-8"
+            },
+            "height": 8,
+            "width": 24,
+            "x": 0,
+            "y": 40
+          }
+        },
+        {
+          "kind": "GridLayoutItem",
+          "spec": {
+            "element": {
+              "kind": "ElementReference",
+              "name": "panel-19"
+            },
+            "height": 18,
+            "width": 24,
+            "x": 0,
+            "y": 48
+          }
+        }
+      ]
+    }
+  },
+  "links": [],
+  "liveNow": false,
   "preload": false,
-  "refresh": "10s",
-  "schemaVersion": 40,
   "tags": [],
-  "templating": {
-    "list": [
-      {
+  "timeSettings": {
+    "autoRefresh": "10s",
+    "autoRefreshIntervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "fiscalYearStartMonth": 0,
+    "from": "now-30m",
+    "hideTimepicker": false,
+    "timezone": "browser",
+    "to": "now"
+  },
+  "title": "CoreDNS",
+  "variables": [
+    {
+      "kind": "DatasourceVariable",
+      "spec": {
         "current": {
           "text": "grafana-clickhouse-datasource",
-          "value": "aeeovp3d85dkwd"
+          "value": "aenzpsmmss5q8b"
         },
-        "hide": 2,
+        "hide": "hideVariable",
+        "includeAll": false,
+        "multi": false,
         "name": "clickhouse_datasource",
         "options": [],
-        "query": "grafana-clickhouse-datasource",
-        "refresh": 1,
+        "pluginId": "grafana-clickhouse-datasource",
+        "refresh": "onDashboardLoad",
         "regex": "",
-        "type": "datasource"
-      },
-      {
-        "allowCustomValue": false,
+        "skipUrlSync": false
+      }
+    },
+    {
+      "kind": "QueryVariable",
+      "spec": {
         "current": {
-          "text": "All",
+          "text": [
+            "All"
+          ],
           "value": [
             "$__all"
           ]
         },
         "definition": "select distinct client_ip from dns_logs_mv",
+        "hide": "dontHide",
         "includeAll": true,
         "multi": true,
         "name": "client_ip",
         "options": [],
-        "query": "select distinct client_ip from dns_logs_mv",
-        "refresh": 1,
+        "query": {
+          "kind": "grafana-clickhouse-datasource",
+          "spec": {
+            "__legacyStringValue": "select distinct client_ip from dns_logs_mv"
+          }
+        },
+        "refresh": "onDashboardLoad",
         "regex": "",
-        "type": "query"
-      },
-      {
-        "allowCustomValue": false,
+        "skipUrlSync": false,
+        "sort": "disabled"
+      }
+    },
+    {
+      "kind": "QueryVariable",
+      "spec": {
         "current": {
           "text": "All",
           "value": [
@@ -1921,17 +2420,26 @@
           ]
         },
         "definition": "select distinct rcode from dns_logs_mv",
+        "hide": "dontHide",
         "includeAll": true,
         "multi": true,
         "name": "rcode",
         "options": [],
-        "query": "select distinct rcode from dns_logs_mv",
-        "refresh": 1,
+        "query": {
+          "kind": "grafana-clickhouse-datasource",
+          "spec": {
+            "__legacyStringValue": "select distinct rcode from dns_logs_mv"
+          }
+        },
+        "refresh": "onDashboardLoad",
         "regex": "",
-        "type": "query"
-      },
-      {
-        "allowCustomValue": false,
+        "skipUrlSync": false,
+        "sort": "disabled"
+      }
+    },
+    {
+      "kind": "QueryVariable",
+      "spec": {
         "current": {
           "text": "All",
           "value": [
@@ -1940,17 +2448,26 @@
         },
         "definition": "select distinct name from dns_logs_mv",
         "description": "",
+        "hide": "dontHide",
         "includeAll": true,
         "multi": true,
         "name": "name",
         "options": [],
-        "query": "select distinct name from dns_logs_mv",
-        "refresh": 2,
+        "query": {
+          "kind": "grafana-clickhouse-datasource",
+          "spec": {
+            "__legacyStringValue": "select distinct name from dns_logs_mv"
+          }
+        },
+        "refresh": "onTimeRangeChanged",
         "regex": "",
-        "type": "query"
-      },
-      {
-        "allowCustomValue": false,
+        "skipUrlSync": false,
+        "sort": "disabled"
+      }
+    },
+    {
+      "kind": "QueryVariable",
+      "spec": {
         "current": {
           "text": "All",
           "value": [
@@ -1959,43 +2476,49 @@
         },
         "definition": "select distinct type from dns_logs_mv",
         "description": "",
+        "hide": "dontHide",
         "includeAll": true,
         "multi": true,
         "name": "type",
         "options": [],
-        "query": "select distinct type from dns_logs_mv",
-        "refresh": 2,
+        "query": {
+          "kind": "grafana-clickhouse-datasource",
+          "spec": {
+            "__legacyStringValue": "select distinct type from dns_logs_mv"
+          }
+        },
+        "refresh": "onTimeRangeChanged",
         "regex": "",
-        "type": "query"
-      },
-      {
-        "allowCustomValue": false,
+        "skipUrlSync": false,
+        "sort": "disabled"
+      }
+    },
+    {
+      "kind": "QueryVariable",
+      "spec": {
         "current": {
           "text": "All",
           "value": [
             "$__all"
           ]
         },
-        "definition": "select distinct\nIPv4CIDRToRange(client_ip, 24).1 as subnet\nfrom dns_logs_mv",
+        "definition": "SELECT DISTINCT\n    IPv4CIDRToRange(ifNull(client_ip, toIPv4('0.0.0.0')), 24).1 as subnet\nFROM dns_logs_mv",
+        "hide": "dontHide",
         "includeAll": true,
         "multi": true,
         "name": "subnet",
         "options": [],
-        "query": "select distinct\nIPv4CIDRToRange(client_ip, 24).1 as subnet\nfrom dns_logs_mv",
-        "refresh": 2,
+        "query": {
+          "kind": "grafana-clickhouse-datasource",
+          "spec": {
+            "__legacyStringValue": "SELECT DISTINCT\n    IPv4CIDRToRange(ifNull(client_ip, toIPv4('0.0.0.0')), 24).1 as subnet\nFROM dns_logs_mv"
+          }
+        },
+        "refresh": "onTimeRangeChanged",
         "regex": "",
-        "type": "query"
+        "skipUrlSync": false,
+        "sort": "disabled"
       }
-    ]
-  },
-  "time": {
-    "from": "now-30m",
-    "to": "now"
-  },
-  "timepicker": {},
-  "timezone": "browser",
-  "title": "CoreDNS",
-  "uid": "aedhvj0w19wxse",
-  "version": 31,
-  "weekStart": ""
+    }
+  ]
 }
