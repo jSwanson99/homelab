@@ -6,29 +6,15 @@ variable "user" {
   type      = string
   sensitive = true
 }
-variable "proxmox_ip" {
-  type = string
-}
 variable "gateway_ip" {
   type = string
 }
 variable "coredns_ip" {
   type = string
 }
-variable "coredns2_ip" {
-  type = string
-}
-variable "forward_proxy_ip" {
-  type = string
-}
 variable "corefile" {
   type = string
 }
-variable "ca_private_key_pem" {
-  type      = string
-  sensitive = true
-}
-variable "ca_cert_pem" {
-  type      = string
-  sensitive = true
+variable "node_name" {
+  type = string
 }

@@ -6,12 +6,20 @@ variable "user" {
   type      = string
   sensitive = true
 }
+variable "proxmox_ip" {
+  type = string
+}
 variable "gateway_ip" {
   type = string
 }
-variable "coredns_ip" {
+variable "squid_ip" {
   type = string
 }
-variable "corefile" {
-  type = string
+variable "ca_private_key_pem" {
+  type      = string
+  sensitive = true
+}
+variable "ca_cert_pem" {
+  type      = string
+  sensitive = true
 }

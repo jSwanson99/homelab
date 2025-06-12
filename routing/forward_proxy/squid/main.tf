@@ -1,16 +1,16 @@
-resource "proxmox_vm_qemu" "coredns" {
-  name        = "coredns"
-  target_node = "pve"
+resource "proxmox_vm_qemu" "squid" {
+  name        = "squid"
+  target_node = "pve1"
   clone       = var.vm_template_id
   full_clone  = true
   cores       = 2
   memory      = 4096
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
-  boot        = "order=scsi0;ide2"
+  boot        = "order=scsi0"
   onboot      = true
 
-  ipconfig0 = "ip=${var.coredns_ip},gw=${var.gateway_ip}"
+  ipconfig0 = "ip=${var.squid_ip},gw=${var.gateway_ip}"
   ciuser    = var.user
   sshkeys   = <<EOF
 ${file("~/.ssh/id_ed25519.pub")}
@@ -31,45 +31,53 @@ EOF
           storage = "local-lvm"
         }
       }
-      ide2 {
-        cdrom {
-          iso = "local:iso/Rocky-9.4-x86_64-minimal.iso"
-        }
-      }
     }
   }
+
   network {
     firewall = true
     bridge   = "vmbr0"
     model    = "virtio"
   }
+
   connection {
     type        = "ssh"
     user        = var.user
     private_key = file("~/.ssh/id_ed25519")
-    host        = split("/", var.coredns_ip)[0]
+    host        = split("/", var.squid_ip)[0]
   }
 
   provisioner "remote-exec" {
     script = "${path.module}/provision.sh"
   }
+
   provisioner "file" {
-    content     = var.corefile
-    destination = "/etc/coredns/Corefile"
+    source      = "${path.module}/squid.conf"
+    destination = "/etc/squid/squid.conf"
+  }
+
+  provisioner "file" {
+    content     = "${tls_locally_signed_cert.squid.cert_pem}${tls_locally_signed_cert.intermediate_ca.cert_pem}"
+    destination = "/etc/squid/squid-cert.pem"
   }
   provisioner "file" {
-    source      = "${path.module}/otelcol.yaml"
-    destination = "/etc/otelcol-contrib/config.yaml"
+    content     = tls_private_key.squid.private_key_pem
+    destination = "/etc/squid/squid-key.pem"
   }
   provisioner "file" {
-    source      = "${path.module}/coredns.service"
-    destination = "/etc/systemd/system/coredns.service"
+    content     = tls_locally_signed_cert.intermediate_ca.cert_pem
+    destination = "/etc/squid/squid-ca.pem"
   }
+  provisioner "file" {
+    content     = tls_private_key.intermediate_ca.private_key_pem
+    destination = "/etc/squid/squid-ca-key.pem"
+  }
+
   provisioner "remote-exec" {
     script = "${path.module}/start.sh"
   }
 }
 
-output "coredns_ip" {
-  value = split("/", var.coredns_ip)[0]
+output "squid_ip" {
+  value = split("/", var.squid_ip)[0]
 }

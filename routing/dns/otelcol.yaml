@@ -25,6 +25,11 @@ receivers:
 
 processors:
   batch:
+  resource:
+    attributes:
+      - key: "service.name"
+        value: "coredns"
+        action: upsert
 
 exporters:
   debug:
@@ -43,13 +48,13 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: [resource, batch]
       exporters: [otlp]
     metrics:
-      receivers: [otlp, prometheus]
-      processors: [batch]
+      receivers: [otlp]
+      processors: [resource, batch]
       exporters: [otlp]
     logs:
       receivers: [journald]
-      processors: [batch]
+      processors: [resource, batch]
       exporters: [otlp]
