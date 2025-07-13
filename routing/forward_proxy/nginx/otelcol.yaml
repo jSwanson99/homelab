@@ -1,0 +1,57 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+  prometheus:
+    config:
+      scrape_configs:
+      - job_name: 'otel-collector'
+        scrape_interval: 30s
+        static_configs:
+        - targets: ['0.0.0.0:8888']
+
+  journald:
+    directory: /run/log/journal
+    units:
+      - ssh
+    priority: info
+
+  filelog:
+    include: ['/var/log/nginx/*.log']
+
+processors:
+  batch:
+  resource:
+    attributes:
+      - key: "service.name"
+        value: "nginx"
+        action: upsert
+
+exporters:
+  otlp:
+    endpoint: otelcol.jds.net:4317
+    tls:
+      insecure: true
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+    timeout: 30s
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [resource, batch]
+      exporters: [otlp]
+    metrics:
+      receivers: [otlp]
+      processors: [resource, batch]
+      exporters: [otlp]
+    logs:
+      receivers: [otlp, filelog, journald]
+      processors: [resource, batch]
+      exporters: [otlp]

@@ -54,6 +54,10 @@ EOF
   provisioner "remote-exec" {
     script = "${path.module}/provision.sh"
   }
+  provisioner "file" {
+    source      = "${path.module}/otelcol.yaml"
+    destination = "/etc/otelcol-contrib/config.yaml"
+  }
   provisioner "remote-exec" {
     inline = [
       "mkdir -p /etc/pki/nginx",

@@ -7,6 +7,8 @@ CERT_DIR=/etc/pki/nginx/certs
 mkdir -p "$CERT_DIR"
 openssl genrsa -out "$CERT_DIR/$DOMAIN.key" 2048
 
+# Had to remove from v3 req
+# authorityKeyIdentifier = keyid,issuer
 cat > "$CERT_DIR/$DOMAIN.conf" << EOF
 [req]
 distinguished_name = req_distinguished_name
@@ -26,7 +28,6 @@ basicConstraints = CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth, clientAuth
 subjectKeyIdentifier = hash
-authorityKeyIdentifier = keyid,issuer
 subjectAltName = @alt_names
 
 [alt_names]

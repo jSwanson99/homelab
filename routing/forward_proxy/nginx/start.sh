@@ -26,3 +26,4 @@ firewall-cmd --reload
 
 systemctl enable nginx
 systemctl start nginx
+systemctl restart otelcol-contrib
