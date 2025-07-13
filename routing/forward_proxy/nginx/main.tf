@@ -9,7 +9,7 @@ resource "proxmox_vm_qemu" "nginx" {
   os_type     = "cloud-init"
   boot        = "order=scsi0;ide2"
 
-  ipconfig0 = "ip=${var.nginx_ip},gw=${var.gateway_ip}"
+  ipconfig0 = "ip=${var.forward_proxy_ip},gw=${var.gateway_ip}"
   ciuser    = var.user
   sshkeys   = <<EOF
 ${file("~/.ssh/id_ed25519.pub")}
@@ -48,7 +48,7 @@ EOF
     type        = "ssh"
     user        = var.user
     private_key = file("~/.ssh/id_ed25519")
-    host        = split("/", var.nginx_ip)[0]
+    host        = split("/", var.forward_proxy_ip)[0]
   }
 
   provisioner "remote-exec" {
@@ -100,6 +100,6 @@ EOF
   }
 }
 
-output "nginx_ip" {
-  value = split("/", var.nginx_ip)[0]
+output "forward_proxy_ip" {
+  value = split("/", var.forward_proxy_ip)[0]
 }

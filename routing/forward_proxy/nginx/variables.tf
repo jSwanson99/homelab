@@ -12,7 +12,7 @@ variable "gateway_ip" {
 variable "proxmox_ip" {
   type = string
 }
-variable "nginx_ip" {
+variable "forward_proxy_ip" {
   type = string
 }
 variable "coredns_ip" {

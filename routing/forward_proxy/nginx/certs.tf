@@ -51,5 +51,5 @@ resource "tls_cert_request" "nginx" {
     country      = "US"
     organization = "JonCorpIncLLC"
   }
-  ip_addresses = ["127.0.0.1", split("/", var.nginx_ip)[0]]
+  ip_addresses = ["127.0.0.1", split("/", var.forward_proxy_ip)[0]]
 }
