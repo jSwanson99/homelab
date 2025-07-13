@@ -3,11 +3,8 @@ set -e
 set -o pipefail
 exec 1> >(tee -a "/tmp/kubernetes_install.log") 2>&1
 
-echo "Starting update"
-dnf update -y
 dnf install -y curl tar telnet iputils nfs-utils
 dnf clean all
-echo "Update finished"
 
 swapoff -a
 sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
@@ -69,9 +66,11 @@ firewall-cmd --permanent --add-port=4244/tcp
 firewall-cmd --permanent --add-port=4245/tcp # hubble relay
 firewall-cmd --permanent --add-port=8472/udp
 firewall-cmd --permanent --add-port=10250/tcp  # Kubelet API
-firewall-cmd --permanent --add-port=4240/tcp  # Cilium Health Check
-firewall-cmd --permanent --add-port=7946/tcp
 firewall-cmd --permanent --add-port=7946/udp
 firewall-cmd --permanent --add-port=8080/udp
 firewall-cmd --permanent --add-port=4000/tcp
+firewall-cmd --permanent --add-port=7472/tcp # MetalLB Metrics
+firewall-cmd --permanent --add-port=9962-9965/tcp  # Cilium metrics
+firewall-cmd --permanent --add-port=4240/tcp  # Cilium Health Check
+firewall-cmd --permanent --add-port=9100/tcp # node_exporter
 firewall-cmd --reload

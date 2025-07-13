@@ -20,3 +20,9 @@ variable "join_cmd" {
   type      = string
   sensitive = true
 }
+variable "cpu" {
+  type = number
+}
+variable "mem" {
+  type = number
+}

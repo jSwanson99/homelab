@@ -3,8 +3,8 @@ resource "proxmox_vm_qemu" "kubernetes_node" {
   target_node = var.target_node
   clone       = var.vm_template_id
   full_clone  = true
-  cores       = 4
-  memory      = 4096
+  cores       = var.cpu
+  memory      = var.mem
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
   boot        = "order=scsi0"
@@ -43,7 +43,7 @@ EOF
     host        = split("/", var.kubernetes_node_ip)[0]
   }
   provisioner "file" {
-    source      = "${path.module}/config.yaml"
+    source      = "${path.module}/kubelet-config.yaml"
     destination = "/var/lib/kubelet/config.yaml"
   }
   provisioner "remote-exec" {

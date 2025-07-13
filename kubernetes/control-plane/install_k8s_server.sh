@@ -10,7 +10,6 @@ firewall-cmd --permanent --add-port=2379-2380/tcp  # etcd
 firewall-cmd --permanent --add-port=10251/tcp  # kube-scheduler
 firewall-cmd --permanent --add-port=10257/tcp  # kube-controller-manager
 firewall-cmd --permanent --add-port=12000/tcp  # hubble
-firewall-cmd --permanent --add-port=9962-9964/tcp  # Cilium metrics
 firewall-cmd --permanent --add-port=80/tcp # Ingress traffic
 firewall-cmd --permanent --add-port=443/tcp
 firewall-cmd --reload
@@ -70,7 +69,9 @@ cilium install --version 1.17.1 \
   --set enableIdentityMark=true \
   --set ipam.mode=cluster-pool \
 	--set k8sServiceHost=$kubernetes_server_ip \
-	--set k8sServicePort=6443
+	--set k8sServicePort=6443 \
+  --set prometheus.enabled=true \
+  --set operator.prometheus.enabled=true
 
 echo "Enable hubble"
 cilium hubble enable --ui

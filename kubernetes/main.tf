@@ -22,6 +22,8 @@ module "worker_one" {
   gateway_ip         = var.gateway_ip
   user               = var.user
   join_cmd           = module.server.join_cmd
+  cpu                = 6
+  mem                = 8192
 }
 module "worker_two" {
   source             = "./worker"
@@ -32,6 +34,8 @@ module "worker_two" {
   gateway_ip         = var.gateway_ip
   user               = var.user
   join_cmd           = module.server.join_cmd
+  cpu                = 6
+  mem                = 8192
 }
 module "worker_three" {
   source             = "./worker"
@@ -42,6 +46,8 @@ module "worker_three" {
   gateway_ip         = var.gateway_ip
   user               = var.user
   join_cmd           = module.server.join_cmd
+  cpu                = 8
+  mem                = 8192
 }
 
 // Once the cluster is ready, install hubble, argocd, dashboard
