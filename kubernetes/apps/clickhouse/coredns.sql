@@ -1,5 +1,6 @@
--- Creates MView target for Coredns Journald logs
-CREATE OR REPLACE TABLE dns_logs_mv_target (
+CREATE DATABASE IF NOT EXISTS ip;
+
+CREATE OR REPLACE TABLE ip.dns_mv_target (
   Time DateTime64(3, 'America/New_York'),
   level LowCardinality(String),
   client_ip IPv4,
@@ -24,10 +25,11 @@ PARTITION BY toYYYYMM(Time)
 ORDER BY (Time, type, hostname, client_ip)
 SETTINGS index_granularity=8192;
 
-DROP VIEW IF EXISTS dns_logs_mv;
--- Creates mview
-CREATE MATERIALIZED VIEW dns_logs_mv
-TO dns_logs_mv_target
+DROP VIEW IF EXISTS ip.dns;
+
+
+CREATE MATERIALIZED VIEW ip.dns
+TO ip.dns_mv_target
 AS
 SELECT
   toDateTime64(Timestamp, 3, 'America/New_York') as Time,
@@ -59,3 +61,32 @@ FROM (
   FROM otel_logs
 	WHERE ServiceName = 'coredns'
 )
+WHERE message[1] = '[INFO]'
+
+CREATE TABLE ip.arp_mv_target (
+    Timestamp DateTime,
+    ip IPv4,
+    iface LowCardinality(String),
+    macAddr FixedString(17),
+    state LowCardinality(String)
+) ENGINE = MergeTree()
+ORDER BY (Timestamp, ip)
+PARTITION BY toYYYYMMDD(Timestamp)
+TTL Timestamp + INTERVAL 30 DAY;
+
+CREATE MATERIALIZED VIEW ip.arp TO ip.arp_mv_target AS
+SELECT 
+    toStartOfMinute(Timestamp) as Timestamp,
+    toIPv4(logParts[1][1]) as ip,
+    toLowCardinality(logParts[2][1]) as iface,
+    toFixedString(logParts[3][1], 17) as macAddr,
+    toLowCardinality(logParts[4][1]) as state
+FROM (
+    SELECT 
+        Timestamp, 
+        extractAllGroups(Body, '(\S+)') as logParts
+    FROM otel_logs
+    WHERE ServiceName = 'vyos'
+    AND LogAttributes['appname'] = 'ARP-TABLE'
+)
+WHERE isIPv4String(logParts[1][1]);

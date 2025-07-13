@@ -49,7 +49,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "table",
-                      "rawSql": "SELECT\n    type,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY type\nORDER BY count DESC"
+                      "rawSql": "SELECT\n    type,\n    count() AS count\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY type\nORDER BY count DESC"
                     }
                   },
                   "refId": "A"
@@ -148,7 +148,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    client_ip,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY client_ip, minute\nORDER BY minute, count DESC"
+                      "rawSql": "SELECT\n    client_ip,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY client_ip, minute\nORDER BY minute, count DESC"
                     }
                   },
                   "refId": "A"
@@ -284,7 +284,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    count() as queries,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC"
+                      "rawSql": "SELECT\n    count() as queries,\n    toStartOfMinute(Time) AS minute\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC"
                     }
                   },
                   "refId": "A"
@@ -425,7 +425,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(rcode != 'NOERROR') / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(rcode != 'NOERROR') / count() AS error_rate\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
                     }
                   },
                   "refId": "A"
@@ -568,7 +568,7 @@
                       },
                       "pluginVersion": "4.9.0",
                       "queryType": "table",
-                      "rawSql": "SELECT\n    count() AS count,\n    IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 as subnet\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY  subnet\nORDER BY count DESC"
+                      "rawSql": "SELECT\n    count() AS count,\n    IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 as subnet\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY  subnet\nORDER BY count DESC"
                     }
                   },
                   "refId": "A"
@@ -662,7 +662,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
                     }
                   },
                   "refId": "A"
@@ -806,7 +806,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    type\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY type, minute\nORDER BY minute, count DESC"
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    type\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY type, minute\nORDER BY minute, count DESC"
                     }
                   },
                   "refId": "A"
@@ -943,7 +943,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    countIf(dnssec_ok = 0) / count() AS error_rate\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute"
                     }
                   },
                   "refId": "A"
@@ -1087,7 +1087,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "table",
-                      "rawSql": "SELECT\n    *\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nORDER BY Time ASC"
+                      "rawSql": "SELECT\n    *\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nORDER BY Time ASC"
                     }
                   },
                   "refId": "A"
@@ -1447,7 +1447,7 @@
                       },
                       "pluginVersion": "4.9.0",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    quantile(0.9)(duration_secs) as p90,\n    toStartOfMinute(Time) AS minute\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet}) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC"
+                      "rawSql": "SELECT\n    quantile(0.9)(duration_secs) as p90,\n    toStartOfMinute(Time) AS minute\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet}) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY minute\nORDER BY minute DESC"
                     }
                   },
                   "refId": "A"
@@ -1589,7 +1589,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "table",
-                      "rawSql": "SELECT\n    client_ip,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY client_ip\nORDER BY count DESC"
+                      "rawSql": "SELECT\n    client_ip,\n    count() AS count\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY client_ip\nORDER BY count DESC"
                     }
                   },
                   "refId": "A"
@@ -1688,7 +1688,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "table",
-                      "rawSql": "SELECT\n    rcode,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY rcode\nORDER BY count DESC"
+                      "rawSql": "SELECT\n    rcode,\n    count() AS count\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY rcode\nORDER BY count DESC"
                     }
                   },
                   "refId": "A"
@@ -1782,7 +1782,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "table",
-                      "rawSql": "SELECT\n    dnssec_ok,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY dnssec_ok\nORDER BY count DESC"
+                      "rawSql": "SELECT\n    dnssec_ok,\n    count() AS count\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY dnssec_ok\nORDER BY count DESC"
                     }
                   },
                   "refId": "A"
@@ -1892,7 +1892,7 @@
                       },
                       "pluginVersion": "4.8.2",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    name,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY name, minute\nORDER BY minute, count DESC"
+                      "rawSql": "SELECT\n    name,\n    toStartOfMinute(Time) AS minute,\n    count() AS count\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) AND name IN (${name}) AND rcode IN (${rcode}) AND type IN (${type}) AND $__timeFilter(Time) AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY name, minute\nORDER BY minute, count DESC"
                     }
                   },
                   "refId": "A"
@@ -2028,7 +2028,7 @@
                       },
                       "pluginVersion": "4.9.0",
                       "queryType": "timeseries",
-                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 as subnet\nFROM dns_logs_mv\nWHERE client_ip IN (${client_ip}) \n  AND name IN (${name}) \n  AND rcode IN (${rcode}) \n  AND type IN (${type}) \n  AND $__timeFilter(Time) \n  AND client_ip IS NOT NULL\n  AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY subnet, minute\nORDER BY minute, count DESC"
+                      "rawSql": "SELECT\n    toStartOfMinute(Time) AS minute,\n    count() AS count,\n    IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 as subnet\nFROM ip.dns\nWHERE client_ip IN (${client_ip}) \n  AND name IN (${name}) \n  AND rcode IN (${rcode}) \n  AND type IN (${type}) \n  AND $__timeFilter(Time) \n  AND client_ip IS NOT NULL\n  AND IPv4CIDRToRange(assumeNotNull(client_ip), 24).1 IN (${subnet})\nGROUP BY subnet, minute\nORDER BY minute, count DESC"
                     }
                   },
                   "refId": "A"
@@ -2392,7 +2392,7 @@
             "$__all"
           ]
         },
-        "definition": "select distinct client_ip from dns_logs_mv",
+        "definition": "select distinct client_ip from ip.dns",
         "hide": "dontHide",
         "includeAll": true,
         "multi": true,
@@ -2401,7 +2401,7 @@
         "query": {
           "kind": "grafana-clickhouse-datasource",
           "spec": {
-            "__legacyStringValue": "select distinct client_ip from dns_logs_mv"
+            "__legacyStringValue": "select distinct client_ip from ip.dns"
           }
         },
         "refresh": "onDashboardLoad",
@@ -2419,7 +2419,7 @@
             "$__all"
           ]
         },
-        "definition": "select distinct rcode from dns_logs_mv",
+        "definition": "select distinct rcode from ip.dns",
         "hide": "dontHide",
         "includeAll": true,
         "multi": true,
@@ -2428,7 +2428,7 @@
         "query": {
           "kind": "grafana-clickhouse-datasource",
           "spec": {
-            "__legacyStringValue": "select distinct rcode from dns_logs_mv"
+            "__legacyStringValue": "select distinct rcode from ip.dns"
           }
         },
         "refresh": "onDashboardLoad",
@@ -2446,7 +2446,7 @@
             "$__all"
           ]
         },
-        "definition": "select distinct name from dns_logs_mv",
+        "definition": "select distinct name from ip.dns",
         "description": "",
         "hide": "dontHide",
         "includeAll": true,
@@ -2456,7 +2456,7 @@
         "query": {
           "kind": "grafana-clickhouse-datasource",
           "spec": {
-            "__legacyStringValue": "select distinct name from dns_logs_mv"
+            "__legacyStringValue": "select distinct name from ip.dns"
           }
         },
         "refresh": "onTimeRangeChanged",
@@ -2474,7 +2474,7 @@
             "$__all"
           ]
         },
-        "definition": "select distinct type from dns_logs_mv",
+        "definition": "select distinct type from ip.dns",
         "description": "",
         "hide": "dontHide",
         "includeAll": true,
@@ -2484,7 +2484,7 @@
         "query": {
           "kind": "grafana-clickhouse-datasource",
           "spec": {
-            "__legacyStringValue": "select distinct type from dns_logs_mv"
+            "__legacyStringValue": "select distinct type from ip.dns"
           }
         },
         "refresh": "onTimeRangeChanged",
@@ -2502,7 +2502,7 @@
             "$__all"
           ]
         },
-        "definition": "SELECT DISTINCT\n    IPv4CIDRToRange(ifNull(client_ip, toIPv4('0.0.0.0')), 24).1 as subnet\nFROM dns_logs_mv",
+        "definition": "SELECT DISTINCT\n    IPv4CIDRToRange(ifNull(client_ip, toIPv4('0.0.0.0')), 24).1 as subnet\nFROM ip.dns",
         "hide": "dontHide",
         "includeAll": true,
         "multi": true,
@@ -2511,7 +2511,7 @@
         "query": {
           "kind": "grafana-clickhouse-datasource",
           "spec": {
-            "__legacyStringValue": "SELECT DISTINCT\n    IPv4CIDRToRange(ifNull(client_ip, toIPv4('0.0.0.0')), 24).1 as subnet\nFROM dns_logs_mv"
+            "__legacyStringValue": "SELECT DISTINCT\n    IPv4CIDRToRange(ifNull(client_ip, toIPv4('0.0.0.0')), 24).1 as subnet\nFROM ip.dns"
           }
         },
         "refresh": "onTimeRangeChanged",
