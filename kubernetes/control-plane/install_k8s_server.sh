@@ -37,13 +37,15 @@ echo "Install helm"
 curl -LO https://get.helm.sh/helm-v3.17.0-linux-amd64.tar.gz
 tar -zxvf helm-v3*.tar.gz
 mv linux-amd64/helm /usr/local/bin/helm
-
 cat <<EOF | sudo tee /etc/sysctl.d/99-kubernetes-cri.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 net.ipv4.conf.all.forwarding        = 1
 EOF
 sudo sysctl --system
+
+echo "Installing gateway crds"
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/experimental-install.yaml
 
 echo "Install cillium cli"
 CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/main/stable.txt)
@@ -58,7 +60,9 @@ echo "Install cilium"
 cilium install --version 1.17.1 \
 	--set kubeProxyReplacement=true \
 	--set l7Proxy=true \
-	--set ingressController.enabled=true \
+	--set l2announcements.enabled=true \
+	--set k8sClientRateLimit.qps=10 \
+	--set k8sClientRateLimit.burst=15 \
 	--set ingressController.default=true \
 	--set ingressController.loadbalancerMode=dedicated \
 	--set loadBalancer.l7.backend=envoy \
@@ -71,12 +75,20 @@ cilium install --version 1.17.1 \
 	--set k8sServiceHost=$kubernetes_server_ip \
 	--set k8sServicePort=6443 \
   --set prometheus.enabled=true \
-  --set operator.prometheus.enabled=true
+  --set operator.prometheus.enabled=true \
+	--set gatewayAPI.enabled=true
 
 echo "Enable hubble"
 cilium hubble enable --ui
+
 echo "Install hubble cli"
 curl -L --remote-name-all https://github.com/cilium/hubble/releases/latest/download/hubble-linux-amd64.tar.gz
 tar xzvf hubble-linux-amd64.tar.gz
 sudo mv hubble /usr/local/bin
 
+echo "Setup ClusterIssuer Key Pair"
+kubectl create ns cert-manager
+kubectl create secret tls cluster-issuer-keypair \
+  --cert=/etc/kubernetes/pki/ca.crt \
+  --key=/etc/kubernetes/pki/ca.key \
+  --namespace=cert-manager

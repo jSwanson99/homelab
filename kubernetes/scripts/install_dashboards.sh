@@ -35,6 +35,7 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 echo "Waiting for initial Argo CD deployment..."
 kubectl wait --for=condition=Available deployment -l app.kubernetes.io/part-of=argocd -n argocd --timeout=300s
 
+# Enable otel for argocd
 cat <<EOF | kubectl apply -n argocd -f -
 apiVersion: v1
 kind: ConfigMap
@@ -47,6 +48,8 @@ data:
   otlp.address: "otelcol.jds.net:4317"
   otlp.insecure: "true"
 EOF
+
+# Avoid argo trying to prune CiliumIdentity
 kubectl patch configmap argocd-cm -n argocd --type merge -p '
 data:
   repositories: |
@@ -61,6 +64,7 @@ data:
       - "*"
 '
 
+# Patch initial services, maybe I can do this with kustomize?
 kubectl patch service hubble-ui \
 	-n kube-system \
 	-p '{"spec": {"type": "LoadBalancer", "loadBalancerIP": "${hubble_ip}"}}'

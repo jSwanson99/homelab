@@ -59,14 +59,15 @@ systemctl enable kubelet
 systemctl start kubelet
 
 # Required for cilium
-firewall-cmd --permanent --add-port=80/udp 
-firewall-cmd --permanent --add-port=443/udp
+firewall-cmd --permanent --add-port=80/tcp
+firewall-cmd --permanent --add-port=443/tcp
 firewall-cmd --permanent --add-port=4789/udp # VXLAN
 firewall-cmd --permanent --add-port=4244/tcp
 firewall-cmd --permanent --add-port=4245/tcp # hubble relay
 firewall-cmd --permanent --add-port=8472/udp
 firewall-cmd --permanent --add-port=10250/tcp  # Kubelet API
 firewall-cmd --permanent --add-port=7946/udp
+firewall-cmd --permanent --add-port=7946/tcp
 firewall-cmd --permanent --add-port=8080/udp
 firewall-cmd --permanent --add-port=4000/tcp
 firewall-cmd --permanent --add-port=7472/tcp # MetalLB Metrics
