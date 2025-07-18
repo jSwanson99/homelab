@@ -24,7 +24,7 @@ variable "kubernetes_node_three_ip" {
   type = string
 }
 variable "k8s_app_ip_range" {
-  type = string
+  type = list(string)
 }
 variable "argocd_ip" {
   type = string

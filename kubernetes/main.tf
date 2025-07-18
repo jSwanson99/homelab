@@ -69,10 +69,13 @@ resource "null_resource" "bootstrap_k8s" {
     destination = "/tmp/all_apps.yaml"
   }
   provisioner "file" {
+    # TODO this will change, so that git repo to install
+    # is configurable by the module
     content = templatefile("${path.module}/scripts/install_dashboards.sh", {
-      argocd_ip        = split("/", var.argocd_ip)[0]
-      hubble_ip        = split("/", var.hubble_ip)[0]
-      k8s_app_ip_range = split("/", var.k8s_app_ip_range)[0]
+      argocd_ip      = split("/", var.argocd_ip)[0]
+      hubble_ip      = split("/", var.hubble_ip)[0]
+      ip_range_start = var.k8s_app_ip_range[0]
+      ip_range_end   = var.k8s_app_ip_range[1]
     })
     destination = "/tmp/install_dashboards.sh"
   }

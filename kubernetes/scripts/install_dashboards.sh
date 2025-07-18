@@ -2,30 +2,17 @@
 
 cilium status --wait
 
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
-kubectl wait --namespace metallb-system \
- --for=condition=ready pod \
- --selector=app=metallb \
- --timeout=90s
-
-cat <<EOF | kubectl apply -f -
-apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
+# Primarily here so that if things break on a rebuild,
+# at least there is a reachable UI for argo without extra work
+cat <<EOF | kubectl apply -n argocd -f -
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumLoadBalancerIPPool
 metadata:
- name: first-pool
- namespace: metallb-system
+  name: main-pool
 spec:
- addresses:
- - ${k8s_app_ip_range}
----
-apiVersion: metallb.io/v1beta1
-kind: L2Advertisement
-metadata:
- name: l2-advert
- namespace: metallb-system
-spec:
- ipAddressPools:
- - first-pool
+  blocks:
+  - start: ${ip_range_start}
+    stop: ${ip_range_end}
 EOF
 
 

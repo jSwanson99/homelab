@@ -44,6 +44,7 @@ net.ipv4.conf.all.forwarding        = 1
 EOF
 sudo sysctl --system
 
+# These need to be installed before cilium is
 echo "Installing gateway crds"
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/experimental-install.yaml
 
