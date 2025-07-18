@@ -11,6 +11,7 @@ module "dns" {
 module "forward_proxy" {
   source             = "./forward_proxy"
   user               = var.user
+  coredns_ip         = var.coredns_ip
   gateway_ip         = var.gateway_ip
   proxmox_ip         = var.proxmox_ip
   vm_template_id     = var.vm_template_id

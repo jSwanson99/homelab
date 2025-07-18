@@ -13,50 +13,67 @@ module "server" {
   ca_private_key_pem   = var.ca_private_key_pem
   ca_cert_pem          = var.ca_cert_pem
 }
-module "worker_one" {
-  source             = "./worker"
-  target_node        = "pve"
-  node_name          = "worker-one"
-  vm_template_id     = var.vm_template_id
-  kubernetes_node_ip = var.kubernetes_node_one_ip
-  gateway_ip         = var.gateway_ip
-  user               = var.user
-  join_cmd           = module.server.join_cmd
-  cpu                = 6
-  mem                = 8192
-}
-module "worker_two" {
-  source             = "./worker"
-  target_node        = "pve"
-  node_name          = "worker-two"
-  vm_template_id     = var.vm_template_id
-  kubernetes_node_ip = var.kubernetes_node_two_ip
-  gateway_ip         = var.gateway_ip
-  user               = var.user
-  join_cmd           = module.server.join_cmd
-  cpu                = 6
-  mem                = 8192
-}
-module "worker_three" {
-  source             = "./worker"
-  target_node        = "pve1"
-  node_name          = "worker-three"
-  vm_template_id     = var.vm_template_id
-  kubernetes_node_ip = var.kubernetes_node_three_ip
-  gateway_ip         = var.gateway_ip
-  user               = var.user
-  join_cmd           = module.server.join_cmd
-  cpu                = 8
-  mem                = 8192
+module "workers" {
+  source   = "./worker"
+  for_each = { for idx, worker in var.workers : worker.name => worker }
+
+  target_node        = each.value.target_node
+  node_name          = each.value.name
+  kubernetes_node_ip = each.value.ip
+  cpu                = each.value.cpu
+  mem                = each.value.mem
+
+  vm_template_id = var.vm_template_id
+  gateway_ip     = var.gateway_ip
+  user           = var.user
+  join_cmd       = module.server.join_cmd
 }
 
+# module "worker_one" {
+#   source             = "./worker"
+#   target_node        = "pve"
+#   node_name          = "worker-one"
+#   vm_template_id     = var.vm_template_id
+#   kubernetes_node_ip = var.kubernetes_node_one_ip
+#   gateway_ip         = var.gateway_ip
+#   user               = var.user
+#   join_cmd           = module.server.join_cmd
+#   cpu                = 6
+#   mem                = 8192
+# }
+# module "worker_two" {
+#   source             = "./worker"
+#   target_node        = "pve"
+#   node_name          = "worker-two"
+#   vm_template_id     = var.vm_template_id
+#   kubernetes_node_ip = var.kubernetes_node_two_ip
+#   gateway_ip         = var.gateway_ip
+#   user               = var.user
+#   join_cmd           = module.server.join_cmd
+#   cpu                = 6
+#   mem                = 8192
+# }
+# module "worker_three" {
+#   source             = "./worker"
+#   target_node        = "pve1"
+#   node_name          = "worker-three"
+#   vm_template_id     = var.vm_template_id
+#   kubernetes_node_ip = var.kubernetes_node_three_ip
+#   gateway_ip         = var.gateway_ip
+#   user               = var.user
+#   join_cmd           = module.server.join_cmd
+#   cpu                = 8
+#   mem                = 8192
+# }
+# 
 // Once the cluster is ready, install hubble, argocd, dashboard
 resource "null_resource" "bootstrap_k8s" {
   depends_on = [
     module.server,
-    module.worker_one,
-    module.worker_two,
-    module.worker_three,
+    module.workers,
+    #     module.worker_one,
+    #     module.worker_two,
+    #     module.worker_three,
   ]
   connection {
     type        = "ssh"

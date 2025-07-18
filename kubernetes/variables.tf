@@ -14,15 +14,15 @@ variable "gateway_ip" {
 variable "kubernetes_server_ip" {
   type = string
 }
-variable "kubernetes_node_one_ip" {
-  type = string
-}
-variable "kubernetes_node_two_ip" {
-  type = string
-}
-variable "kubernetes_node_three_ip" {
-  type = string
-}
+# variable "kubernetes_node_one_ip" {
+#   type = string
+# }
+# variable "kubernetes_node_two_ip" {
+#   type = string
+# }
+# variable "kubernetes_node_three_ip" {
+#   type = string
+# }
 variable "k8s_app_ip_range" {
   type = list(string)
 }
@@ -39,4 +39,13 @@ variable "ca_private_key_pem" {
 variable "ca_cert_pem" {
   type      = string
   sensitive = true
+}
+variable "workers" {
+  type = list(object({
+    name        = string
+    target_node = string
+    cpu         = number
+    mem         = number
+    ip          = string
+  }))
 }

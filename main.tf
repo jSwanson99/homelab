@@ -40,17 +40,48 @@ module "routing" {
 }
 
 module "kubernetes" {
-  source                   = "./kubernetes"
-  gateway_ip               = var.gateway_ip
-  vm_template_id           = var.vm_template_id
-  user                     = var.user
-  kubernetes_server_ip     = var.kubernetes_server_ip
-  kubernetes_node_one_ip   = var.kubernetes_node_one_ip
-  kubernetes_node_two_ip   = var.kubernetes_node_two_ip
-  kubernetes_node_three_ip = var.kubernetes_node_three_ip
-  argocd_ip                = var.argocd_ip
-  hubble_ip                = var.hubble_ip
-  k8s_app_ip_range         = var.k8s_app_ip_range
-  ca_private_key_pem       = module.pki.pki_ca_key
-  ca_cert_pem              = module.pki.pki_ca_crt
+  source               = "./kubernetes"
+  gateway_ip           = var.gateway_ip
+  vm_template_id       = var.vm_template_id
+  user                 = var.user
+  kubernetes_server_ip = var.kubernetes_server_ip
+  #   kubernetes_node_one_ip   = var.kubernetes_node_one_ip
+  #   kubernetes_node_two_ip   = var.kubernetes_node_two_ip
+  #   kubernetes_node_three_ip = var.kubernetes_node_three_ip
+  argocd_ip          = var.argocd_ip
+  hubble_ip          = var.hubble_ip
+  k8s_app_ip_range   = var.k8s_app_ip_range
+  ca_private_key_pem = module.pki.pki_ca_key
+  ca_cert_pem        = module.pki.pki_ca_crt
+
+  workers = [
+    {
+      name        = "worker-one"
+      target_node = "pve"
+      cpu         = 4
+      mem         = 8192
+      ip          = var.kubernetes_node_one_ip
+    },
+    {
+      name        = "worker-two"
+      target_node = "pve"
+      cpu         = 6
+      mem         = 8192
+      ip          = var.kubernetes_node_two_ip
+    },
+    {
+      name        = "worker-three"
+      target_node = "pve1"
+      cpu         = 8
+      mem         = 24576
+      ip          = var.kubernetes_node_three_ip
+    },
+    {
+      name        = "worker-four"
+      target_node = "pve1"
+      cpu         = 8
+      mem         = 24576
+      ip          = var.kubernetes_node_three_ip
+    }
+  ]
 }

@@ -1,4 +1,6 @@
 jds.net 1.168.192.in-addr.arpa {
+  log
+	errors
   hosts {
     ${gateway_ip} pfsense.jds.net
     192.168.1.2 wireless.jds.net
@@ -16,21 +18,36 @@ jds.net 1.168.192.in-addr.arpa {
     ${grafana_ip}	 grafana.jds.net
     ${argocd_ip}	 argo.jds.net
     ${hubble_ip} hubble.jds.net
-    fallthrough
   }
 }
 
+(fwd_tls) {
+	forward . tls://185.222.222.222 tls://45.11.45.11 {
+		tls_servername dns.sb
+		health_check 5s
+	}
+	dnssec
+	cancel 3s
+	cache 1800
+	errors
+	log
+}
+
+youtube.com {
+	acl {
+		block net 192.168.3.0/24
+	}
+	import fwd_tls
+}
+
 . {
+	acl {
+		allow net 192.168.0.0/16
+		block
+	}
 	hosts /etc/coredns/hosts {
+		no reverse
 		fallthrough
 	}
-  forward . tls://185.222.222.222 tls://45.11.45.11 {
-    tls_servername dns.sb
-    health_check 5s
-  }
-  dnssec
-  cache 1800
-  errors
-  health
-  log
+	import fwd_tls
 }
