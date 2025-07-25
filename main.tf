@@ -2,12 +2,24 @@ module "pki" {
   source = "./pki"
 }
 
-module "storage" {
-  source         = "./storage"
+module "nas" {
+  source         = "./nas"
   user           = var.user
   gateway_ip     = var.gateway_ip
   vm_template_id = "truenas-templ"
   truenas_ip     = var.truenas_ip
+}
+
+module "minio" {
+  source             = "./minio"
+  user               = var.user
+  gateway_ip         = var.gateway_ip
+  minio_ip           = var.minio_ip
+  minio_admin_user   = var.minio_admin_user
+  minio_admin_pw     = var.minio_admin_pw
+  vm_template_id     = var.vm_template_id
+  ca_private_key_pem = module.pki.pki_ca_key
+  ca_cert_pem        = module.pki.pki_ca_crt
 }
 
 module "routing" {
@@ -31,6 +43,7 @@ module "routing" {
     grafana_ip             = split("/", var.grafana_ip)[0]
     argocd_ip              = split("/", var.argocd_ip)[0]
     hubble_ip              = split("/", var.hubble_ip)[0]
+    minio_ip               = split("/", var.minio_ip)[0]
     kubernetes_server_ip   = split("/", var.kubernetes_server_ip)[0]
     kubernetes_node_one_ip = split("/", var.kubernetes_node_one_ip)[0]
     kubernetes_node_two_ip = split("/", var.kubernetes_node_two_ip)[0]
@@ -73,15 +86,8 @@ module "kubernetes" {
       name        = "worker-three"
       target_node = "pve1"
       cpu         = 8
-      mem         = 24576
+      mem         = 24000
       ip          = var.kubernetes_node_three_ip
     },
-    {
-      name        = "worker-four"
-      target_node = "pve1"
-      cpu         = 8
-      mem         = 24576
-      ip          = var.kubernetes_node_three_ip
-    }
   ]
 }
