@@ -1,3 +1,5 @@
+#! /bin/sh
+
 chown -R coredns:coredns /etc/coredns
 systemctl daemon-reload
 systemctl enable coredns

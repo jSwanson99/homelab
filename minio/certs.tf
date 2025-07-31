@@ -11,6 +11,9 @@ resource "tls_cert_request" "minio" {
     organization = "JonCorpIncLLC"
   }
   ip_addresses = ["127.0.0.1", split("/", var.minio_ip)[0]]
+  dns_names = [
+    "minio.jds.net"
+  ]
 }
 
 resource "tls_locally_signed_cert" "minio" {

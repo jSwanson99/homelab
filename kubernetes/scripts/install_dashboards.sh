@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 cilium status --wait
 
 # Primarily here so that if things break on a rebuild,
@@ -34,6 +36,7 @@ metadata:
 data:
   otlp.address: "otelcol.jds.net:4317"
   otlp.insecure: "true"
+  server.insecure: "true" # terminal tls @ gateway TODO something is broken here, needed to patch deploy last time
 EOF
 
 # Avoid argo trying to prune CiliumIdentity
@@ -51,15 +54,7 @@ data:
       - "*"
 '
 
-# Patch initial services, maybe I can do this with kustomize?
-kubectl patch service hubble-ui \
-	-n kube-system \
-	-p '{"spec": {"type": "LoadBalancer", "loadBalancerIP": "${hubble_ip}"}}'
-kubectl patch svc argocd-server \
-	-n argocd \
-	-p '{"spec": {"type": "LoadBalancer", "loadBalancerIP": "${argocd_ip}"}}'
-
-kubectl rollout restart deployment argocd-server argocd-repo-server -n argocd
+kubectl rollout restart deployment -n argocd 
 kubectl wait --for=condition=Available deployment -l app.kubernetes.io/part-of=argocd -n argocd --timeout=300s
 
 echo "setup argo cli, gitops repo"

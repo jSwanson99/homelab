@@ -7,3 +7,4 @@
 state/
 -target*
 gitops
+pki
