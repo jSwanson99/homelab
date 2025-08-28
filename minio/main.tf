@@ -4,7 +4,7 @@ resource "proxmox_vm_qemu" "minio" {
   cores       = 4
   clone       = var.vm_template_id
   full_clone  = true
-  memory      = 16384
+  memory      = 8192
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
   boot        = "order=scsi0"
