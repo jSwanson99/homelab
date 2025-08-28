@@ -4,8 +4,7 @@ set -e
 
 cilium status --wait
 
-# Primarily here so that if things break on a rebuild,
-# at least there is a reachable UI for argo without extra work
+# TODO can we put this in gitops
 cat <<EOF | kubectl apply -n argocd -f -
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumLoadBalancerIPPool
@@ -18,13 +17,15 @@ spec:
 EOF
 
 
+# TODO pin a version
 kubectl create namespace argocd
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
 echo "Waiting for initial Argo CD deployment..."
 kubectl wait --for=condition=Available deployment -l app.kubernetes.io/part-of=argocd -n argocd --timeout=300s
+echo "Initial deploy is ready"
 
-# Enable otel for argocd
+echo "Patching argocd manifests"
 cat <<EOF | kubectl apply -n argocd -f -
 apiVersion: v1
 kind: ConfigMap
@@ -36,7 +37,7 @@ metadata:
 data:
   otlp.address: "otelcol.jds.net:4317"
   otlp.insecure: "true"
-  server.insecure: "true" # terminal tls @ gateway TODO something is broken here, needed to patch deploy last time
+  server.insecure: "true" # terminate tls @ gateway
 EOF
 
 # Avoid argo trying to prune CiliumIdentity
@@ -54,17 +55,16 @@ data:
       - "*"
 '
 
+echo "bounce argo after config changes"
 kubectl rollout restart deployment -n argocd 
 kubectl wait --for=condition=Available deployment -l app.kubernetes.io/part-of=argocd -n argocd --timeout=300s
 
-echo "setup argo cli, gitops repo"
-curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
-rm -f argocd-linux-amd64
-argocd login ${argocd_ip} --insecure \
+echo "login to argocd and add repo"
+kubectl exec -n argocd deploy/argocd-server -- argocd login localhost:8080 --insecure --plaintext \
 	--username admin \
-	--password $(argocd admin initial-password -n argocd | head -n 1)
-argocd repo add https://github.com/jSwanson99/homelab-gitops.git
+	--password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+# do we need this?
+kubectl exec -n argocd deploy/argocd-server -- argocd repo add https://github.com/jSwanson99/homelab-gitops.git
 
 echo "Configuring github sync"
 kubectl apply -f /tmp/all_apps.yaml -n argocd

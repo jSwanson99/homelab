@@ -18,3 +18,6 @@ variable "ca_cert_pem" {
   type      = string
   sensitive = true
 }
+variable "target_node" {
+  type = string
+}

@@ -1,13 +1,13 @@
 resource "proxmox_vm_qemu" "kubernetes_server" {
   name        = "kubernetes-server"
-  target_node = "pve"
+  target_node = var.target_node
   clone       = var.vm_template_id
   full_clone  = true
-  cores       = 2
-  memory      = 4096
+  cores       = 4
+  memory      = 8192
   scsihw      = "virtio-scsi-single"
   os_type     = "cloud-init"
-  boot        = "order=scsi0;ide2"
+  boot        = "order=scsi0"
 
   ipconfig0 = "ip=${var.kubernetes_server_ip},gw=${var.gateway_ip}"
   ciuser    = var.user
@@ -28,11 +28,6 @@ resource "proxmox_vm_qemu" "kubernetes_server" {
       ide0 {
         cloudinit {
           storage = "local-lvm"
-        }
-      }
-      ide2 {
-        cdrom {
-          iso = "local:iso/Rocky-9.4-x86_64-minimal.iso"
         }
       }
     }
@@ -59,6 +54,12 @@ resource "proxmox_vm_qemu" "kubernetes_server" {
   provisioner "file" {
     content     = var.ca_private_key_pem
     destination = "/etc/kubernetes/pki/ca.key"
+  }
+  provisioner "file" {
+    content = templatefile("${path.module}/cilium-values.yaml", {
+      kubernetes_server_ip = split("/", var.kubernetes_server_ip)[0]
+    })
+    destination = "/tmp/cilium-values.yaml"
   }
   provisioner "remote-exec" {
     script = "${path.module}/../scripts/install_k8s.sh"

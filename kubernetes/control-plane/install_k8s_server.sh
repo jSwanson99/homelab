@@ -58,38 +58,16 @@ sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
 rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 echo "Install cilium"
-cilium install --version 1.17.1 \
-	--set kubeProxyReplacement=true \
-	--set l7Proxy=true \
-	--set l2announcements.enabled=true \
-	--set k8sClientRateLimit.qps=10 \
-	--set k8sClientRateLimit.burst=15 \
-	--set ingressController.default=true \
-	--set ingressController.loadbalancerMode=dedicated \
-	--set loadBalancer.l7.backend=envoy \
-	--set hostPort.enabled=true \
-	--set bpf.masquerade=true \
-  --set bpf.vlanBypass={0} \
-  --set enableIPv4Masquerade=true \
-  --set enableIdentityMark=true \
-  --set ipam.mode=cluster-pool \
-	--set k8sServiceHost=$kubernetes_server_ip \
-	--set k8sServicePort=6443 \
-  --set prometheus.enabled=true \
-  --set operator.prometheus.enabled=true \
-	--set gatewayAPI.enabled=true
+cilium install --version 1.18.1 --values /tmp/cilium-values.yaml
 
-echo "Enable hubble"
-cilium hubble enable --ui
-
-echo "Install hubble cli"
-curl -L --remote-name-all https://github.com/cilium/hubble/releases/latest/download/hubble-linux-amd64.tar.gz
-tar xzvf hubble-linux-amd64.tar.gz
-sudo mv hubble /usr/local/bin
+# echo "Install hubble cli"
+# curl -L --remote-name-all https://github.com/cilium/hubble/releases/latest/download/hubble-linux-amd64.tar.gz
+# tar xzvf hubble-linux-amd64.tar.gz
+# sudo mv hubble /usr/local/bin
 
 echo "Setup ClusterIssuer Key Pair"
 kubectl create ns cert-manager
 kubectl create secret tls cluster-issuer-keypair \
-  --cert=/etc/kubernetes/pki/ca.crt \
-  --key=/etc/kubernetes/pki/ca.key \
-  --namespace=cert-manager
+	--cert=/etc/kubernetes/pki/ca.crt \
+	--key=/etc/kubernetes/pki/ca.key \
+	--namespace=cert-manager
