@@ -2,6 +2,20 @@ module "pki" {
   source = "./pki"
 }
 
+module "build" {
+  source             = "./build"
+  user               = var.user
+  gateway_ip         = var.gateway_ip
+  gitlab_ip          = var.gitlab_ip
+  gitlab_admin_user  = var.gitlab_admin_user
+  gitlab_admin_pw    = var.gitlab_admin_pw
+  vm_template_id     = var.vm_template_id
+  ca_private_key_pem = module.pki.pki_ca_key
+  ca_cert_pem        = module.pki.pki_ca_crt
+  github_token       = var.github_token
+}
+
+
 module "nas" {
   source         = "./nas"
   user           = var.user
@@ -58,9 +72,9 @@ module "kubernetes" {
   vm_template_id       = var.vm_template_id
   user                 = var.user
   kubernetes_server_ip = var.kubernetes_server_ip
-  #   kubernetes_node_one_ip   = var.kubernetes_node_one_ip
-  #   kubernetes_node_two_ip   = var.kubernetes_node_two_ip
-  #   kubernetes_node_three_ip = var.kubernetes_node_three_ip
+  # TODO not a fan of needing the IPs here
+  # They are core services / apart of initial install
+  # Maybe we can do hubble later?
   argocd_ip          = var.argocd_ip
   hubble_ip          = var.hubble_ip
   k8s_app_ip_range   = var.k8s_app_ip_range
@@ -85,8 +99,8 @@ module "kubernetes" {
     {
       name        = "worker-three"
       target_node = "pve1"
-      cpu         = 8
-      mem         = 24000
+      cpu         = 4
+      mem         = 12000
       ip          = var.kubernetes_node_three_ip
     },
   ]
